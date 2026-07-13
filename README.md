@@ -1,2 +1,3 @@
 # email-notifier
-A Cloudflare Worker that forwards incoming emails to a Discord webhook and a specified mail server
+
+Cloudflare Worker to forward incoming emails to Discord webhooks and a specified mail server
