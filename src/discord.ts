@@ -7,6 +7,24 @@ const EMBED_FIELD_VALUE_LIMIT = 1024;
 
 const TRUNCATION_MARKER = "\n\n…(truncated)";
 
+/** A single field inside a Discord embed. */
+interface DiscordEmbedField {
+  name: string;
+  value: string;
+}
+
+/** A Discord embed (https://discord.com/developers/docs/resources/message#embed-object). */
+interface DiscordEmbed {
+  title: string;
+  description: string;
+  fields: DiscordEmbedField[];
+}
+
+/** Body of a Discord webhook POST carrying a single embed. */
+export interface DiscordWebhookPayload {
+  embeds: DiscordEmbed[];
+}
+
 /** Truncate `value` to `limit` characters, appending an ellipsis when cut. */
 function truncate(value: string, limit: number, marker = "…"): string {
   if (value.length <= limit) return value;
@@ -14,7 +32,7 @@ function truncate(value: string, limit: number, marker = "…"): string {
 }
 
 /** Build a Discord webhook payload (single embed) from a parsed email. */
-export function buildDiscordPayload(email: ParsedEmail): unknown {
+export function buildDiscordPayload(email: ParsedEmail): DiscordWebhookPayload {
   const body = email.text
     ? truncate(email.text, EMBED_DESCRIPTION_LIMIT, TRUNCATION_MARKER)
     : "(empty body)";
@@ -39,10 +57,7 @@ export function buildDiscordPayload(email: ParsedEmail): unknown {
  * Post a parsed email to a Discord webhook. Throws on a non-2xx response so the
  * caller can log and continue without aborting mail forwarding.
  */
-export async function notifyDiscord(
-  webhookUrl: string,
-  email: ParsedEmail,
-): Promise<void> {
+export async function notifyDiscord(webhookUrl: string, email: ParsedEmail): Promise<void> {
   const response = await fetch(webhookUrl, {
     method: "POST",
     headers: { "content-type": "application/json" },

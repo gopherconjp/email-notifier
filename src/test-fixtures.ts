@@ -1,7 +1,4 @@
-export function buildMime(
-  headers: Record<string, string>,
-  body: string,
-): string {
+export function buildMime(headers: Record<string, string>, body: string): string {
   const head = Object.entries(headers)
     .map(([name, value]) => `${name}: ${value}`)
     .join("\r\n");

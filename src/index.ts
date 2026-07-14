@@ -45,9 +45,7 @@ export default {
 
     // Start forwarding immediately and keep the Promise; do not await yet so the
     // Discord notification runs concurrently with delivery.
-    const forwardPromise = message.forward(
-      `${username}@${env.FORWARD_EMAIL_DOMAIN}`,
-    );
+    const forwardPromise = message.forward(`${username}@${env.FORWARD_EMAIL_DOMAIN}`);
 
     try {
       const webhookUrl = getWebhookMap(env.DISCORD_WEBHOOK_MAP)[username];

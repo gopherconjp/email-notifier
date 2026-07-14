@@ -40,8 +40,15 @@ describe("buildDiscordPayload", () => {
 
   it.each<{ field: "title" | "description"; email: ParsedEmail; limit: number }>([
     { field: "title", email: { subject: "T".repeat(400), from: "f", text: "b" }, limit: 256 },
-    { field: "description", email: { subject: "s", from: "f", text: "x".repeat(5000) }, limit: 4096 },
-  ])("keeps the embed $field within Discord's $limit-character limit", ({ field, email, limit }) => {
-    expect(embedOf(email)[field].length).toBeLessThanOrEqual(limit);
-  });
+    {
+      field: "description",
+      email: { subject: "s", from: "f", text: "x".repeat(5000) },
+      limit: 4096,
+    },
+  ])(
+    "keeps the embed $field within Discord's $limit-character limit",
+    ({ field, email, limit }) => {
+      expect(embedOf(email)[field].length).toBeLessThanOrEqual(limit);
+    },
+  );
 });

@@ -1,0 +1,35 @@
+{
+  "$schema": "./node_modules/oxlint/configuration_schema.json",
+  "plugins": ["typescript", "unicorn", "oxc"],
+  "categories": {
+    "correctness": "error"
+  },
+  "rules": {
+    "typescript/no-explicit-any": "error",
+    "typescript/no-restricted-types": [
+      "error",
+      {
+        "types": {
+          "unknown": "Avoid `unknown`. Type the value concretely; `unknown` is allowed only at the boundary that parses untrusted external input (see the overrides in this config)."
+        }
+      }
+    ]
+  },
+  "env": {
+    "builtin": true
+  },
+  "overrides": [
+    {
+      "files": ["src/index.ts"],
+      "rules": {
+        "typescript/no-restricted-types": "off"
+      }
+    },
+    {
+      "files": ["**/*.test.ts", "src/test-fixtures.ts"],
+      "rules": {
+        "typescript/no-restricted-types": "off"
+      }
+    }
+  ]
+}

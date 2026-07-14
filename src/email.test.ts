@@ -19,8 +19,7 @@ describe("htmlToText", () => {
     { html: "plain text", text: "plain text" },
     { html: "<p>Hello <b>world</b></p><br>line2", text: "Hello world\n\nline2" },
     {
-      html:
-        "<style>.a{color:red}</style><p>a &amp; b &lt;c&gt;</p><script>alert(1)</script>",
+      html: "<style>.a{color:red}</style><p>a &amp; b &lt;c&gt;</p><script>alert(1)</script>",
       text: "a & b <c>",
     },
   ])("renders $html as text", ({ html, text }) => {
