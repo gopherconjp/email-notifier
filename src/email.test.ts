@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { extractUsername, htmlToText, parseEmail } from "./email.ts";
-import { buildMime, mimeStream } from "./test-fixtures.ts";
+import { buildMime, mimeStream } from "./test/fixtures.ts";
 
 describe("extractUsername", () => {
   it.each([

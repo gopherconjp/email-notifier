@@ -1,36 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import worker, { parseWebhookMap } from "./index.ts";
-import type { Env } from "./index.ts";
-import { buildMime, mimeStream } from "./test-fixtures.ts";
-
-const WEBHOOK = "https://discord.com/api/webhooks/xxxx/yyyy";
-
-const SAMPLE_MIME = buildMime(
-  { From: "Alice <alice@example.com>", To: "user1@gophercon.jp", Subject: "Hello" },
-  "Body.",
-);
-
-function makeMessage(to: string) {
-  const forward = vi.fn<(rcptTo: string) => Promise<void>>().mockResolvedValue();
-  const message = {
-    from: "alice@example.com",
-    to,
-    headers: new Headers(),
-    raw: mimeStream(SAMPLE_MIME),
-    rawSize: SAMPLE_MIME.length,
-    forward,
-    setReject: vi.fn(),
-    reply: vi.fn(),
-  } as unknown as ForwardableEmailMessage;
-  return { message, forward };
-}
-
-function makeEnv(map: Record<string, string> = { user1: WEBHOOK }): Env {
-  return {
-    DISCORD_WEBHOOK_MAP: JSON.stringify(map),
-    FORWARD_EMAIL_DOMAIN: "forward.example.com",
-  };
-}
+import { makeEnv, makeMessage, WEBHOOK } from "./test/fixtures.ts";
 
 describe("parseWebhookMap", () => {
   it.each([
