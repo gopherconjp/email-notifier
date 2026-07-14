@@ -13,9 +13,9 @@ describe("parseWebhookMap", () => {
     });
   });
 
-  describe("negative", () => {
+  describe("semi-positive", () => {
     it.each([{ raw: "not json" }, { raw: "[1,2]" }])(
-      "returns an empty map for $raw",
+      "rejects out-of-contract input $raw to an empty map",
       ({ raw }) => {
         vi.spyOn(console, "error").mockImplementation(() => {});
         expect(parseWebhookMap(raw)).toEqual({});
@@ -50,15 +50,25 @@ describe("email handler", () => {
       expect(fetchSpy).toHaveBeenCalledTimes(1);
       expect(fetchSpy.mock.calls[0]![0]).toBe(WEBHOOK);
     });
-  });
 
-  describe("semi-positive", () => {
     it("forwards without notifying when the username has no webhook", async () => {
       const { message, forward } = makeMessage("nobody@gophercon.jp");
 
       await worker.email!(message, makeEnv());
 
       expect(forward).toHaveBeenCalledWith("nobody@forward.example.com");
+      expect(fetchSpy).not.toHaveBeenCalled();
+    });
+  });
+
+  describe("semi-positive", () => {
+    it("forwards without notifying when DISCORD_WEBHOOK_MAP is invalid JSON", async () => {
+      vi.spyOn(console, "error").mockImplementation(() => {});
+      const { message, forward } = makeMessage("user1@gophercon.jp");
+
+      await worker.email!(message, { ...makeEnv(), DISCORD_WEBHOOK_MAP: "not json" });
+
+      expect(forward).toHaveBeenCalledWith("user1@forward.example.com");
       expect(fetchSpy).not.toHaveBeenCalled();
     });
   });
@@ -72,16 +82,6 @@ describe("email handler", () => {
       await expect(worker.email!(message, makeEnv())).resolves.toBeUndefined();
 
       expect(forward).toHaveBeenCalledWith("user1@forward.example.com");
-    });
-
-    it("forwards without notifying when DISCORD_WEBHOOK_MAP is invalid JSON", async () => {
-      vi.spyOn(console, "error").mockImplementation(() => {});
-      const { message, forward } = makeMessage("user1@gophercon.jp");
-
-      await worker.email!(message, { ...makeEnv(), DISCORD_WEBHOOK_MAP: "not json" });
-
-      expect(forward).toHaveBeenCalledWith("user1@forward.example.com");
-      expect(fetchSpy).not.toHaveBeenCalled();
     });
   });
 });

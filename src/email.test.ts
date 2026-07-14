@@ -4,24 +4,14 @@ import { buildMime, mimeStream } from "./test/fixtures.ts";
 
 describe("extractUsername", () => {
   describe("positive", () => {
-    it("returns the local part of a bare address", () => {
-      expect(extractUsername("user1@gophercon.jp")).toBe("user1");
-    });
-  });
-
-  describe("semi-positive", () => {
     it.each([
+      { address: "user1@gophercon.jp", username: "user1" },
       { address: "User One <user1@gophercon.jp>", username: "user1" },
       { address: "User1@gophercon.jp", username: "user1" },
       { address: "  user1  ", username: "user1" },
+      { address: "", username: "" },
     ])("maps $address to '$username'", ({ address, username }) => {
       expect(extractUsername(address)).toBe(username);
-    });
-  });
-
-  describe("negative", () => {
-    it("returns an empty string for empty input", () => {
-      expect(extractUsername("")).toBe("");
     });
   });
 });
@@ -34,9 +24,7 @@ describe("htmlToText", () => {
     ])("renders $html", ({ html, text }) => {
       expect(htmlToText(html)).toBe(text);
     });
-  });
 
-  describe("semi-positive", () => {
     it("strips script/style content and decodes entities", () => {
       expect(
         htmlToText(
@@ -68,10 +56,8 @@ describe("parseEmail", () => {
         text: expect.stringContaining("This is the body."),
       });
     });
-  });
 
-  describe("semi-positive", () => {
-    it("falls back to placeholders when subject and sender are absent", async () => {
+    it("falls back to placeholders for a message without headers", async () => {
       const parsed = await parseEmail(mimeStream("\r\n\r\nbody only"));
 
       expect(parsed.subject).toBe("(no subject)");

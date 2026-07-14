@@ -22,9 +22,7 @@ describe("buildDiscordPayload", () => {
         value: "Alice <alice@example.com>",
       });
     });
-  });
 
-  describe("semi-positive", () => {
     it("shows a placeholder description for an empty body", () => {
       const embed = embedOf({ subject: "s", from: "f", text: "" });
       expect(embed.description).toBe("(empty body)");
