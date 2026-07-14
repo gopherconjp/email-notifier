@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { extractUsername, htmlToText, parseEmail } from "./email.ts";
+import { extractUsername, parseEmail } from "./email.ts";
 import { buildMime, mimeStream } from "./test/fixtures.ts";
 
 describe("extractUsername", () => {
@@ -15,25 +15,6 @@ describe("extractUsername", () => {
   describe("negative", () => {
     it("throws when the input is not an email address", () => {
       expect(() => extractUsername("not-an-address")).toThrow();
-    });
-  });
-});
-
-describe("htmlToText", () => {
-  describe("positive", () => {
-    it.each([
-      { html: "plain text", text: "plain text" },
-      { html: "<p>Hello <b>world</b></p><br>line2", text: "Hello world\n\nline2" },
-    ])("renders $html", ({ html, text }) => {
-      expect(htmlToText(html)).toBe(text);
-    });
-
-    it("strips script/style content and decodes entities", () => {
-      expect(
-        htmlToText(
-          "<style>.a{color:red}</style><p>a &amp; b &lt;c&gt;</p><script>alert(1)</script>",
-        ),
-      ).toBe("a & b <c>");
     });
   });
 });
@@ -70,6 +51,29 @@ describe("parseEmail", () => {
 
       expect(parsed.subject).toBe("(no subject)");
       expect(parsed.from).toBe("Bob <bob@example.com>");
+    });
+
+    it.each([
+      { html: "<p>Hello <b>world</b></p>", text: "Hello world" },
+      {
+        html:
+          "<style>.a{color:red}</style><p>a &amp; b &lt;c&gt;</p><script>alert(1)</script>",
+        text: "a & b <c>",
+      },
+    ])("converts an HTML-only body to text: $html", async ({ html, text }) => {
+      const mime = buildMime(
+        {
+          From: "Bob <bob@example.com>",
+          To: "user1@gophercon.jp",
+          Subject: "s",
+          "Content-Type": "text/html; charset=utf-8",
+        },
+        html,
+      );
+
+      const parsed = await parseEmail(mimeStream(mime));
+
+      expect(parsed.text).toBe(text);
     });
   });
 });

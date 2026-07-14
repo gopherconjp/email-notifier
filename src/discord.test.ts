@@ -1,17 +1,29 @@
-import { describe, expect, it } from "vitest";
-import { buildDiscordPayload, type DiscordEmbed } from "./discord.ts";
+import { afterEach, describe, expect, it, vi } from "vitest";
+import { notifyDiscord } from "./discord.ts";
 import type { ParsedEmail } from "./email.ts";
-
-function embedOf(email: ParsedEmail): DiscordEmbed {
-  return buildDiscordPayload(email).embeds[0]!;
-}
+import { WEBHOOK } from "./test/fixtures.ts";
 
 const ELLIPSIS = "…";
 const TRUNCATION_MARKER = "\n\n…(truncated)";
 
-describe("buildDiscordPayload", () => {
+async function postedEmbed(email: ParsedEmail): Promise<unknown> {
+  const fetchSpy = vi
+    .spyOn(globalThis, "fetch")
+    .mockResolvedValue(new Response(null, { status: 204 }));
+
+  await notifyDiscord(WEBHOOK, email);
+
+  const body = fetchSpy.mock.calls[0]![1]!.body as string;
+  return JSON.parse(body).embeds[0];
+}
+
+afterEach(() => {
+  vi.restoreAllMocks();
+});
+
+describe("notifyDiscord", () => {
   describe("positive", () => {
-    it.each<{ name: string; email: ParsedEmail; embed: DiscordEmbed }>([
+    it.each<{ name: string; email: ParsedEmail; embed: unknown }>([
       {
         name: "a normal email",
         email: {
@@ -52,8 +64,20 @@ describe("buildDiscordPayload", () => {
           fields: [{ name: "From", value: "f" }],
         },
       },
-    ])("builds the embed for $name", ({ email, embed }) => {
-      expect(embedOf(email)).toEqual(embed);
+    ])("posts the embed for $name", async ({ email, embed }) => {
+      expect(await postedEmbed(email)).toEqual(embed);
+    });
+  });
+
+  describe("negative", () => {
+    it("throws when Discord responds with a non-2xx status", async () => {
+      vi.spyOn(globalThis, "fetch").mockResolvedValue(
+        new Response("boom", { status: 500 }),
+      );
+
+      await expect(
+        notifyDiscord(WEBHOOK, { subject: "s", from: "f", text: "b" }),
+      ).rejects.toThrow();
     });
   });
 });

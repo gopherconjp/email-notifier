@@ -1,38 +1,20 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import worker, { parseWebhookMap } from "./index.ts";
+import worker from "./index.ts";
 import { makeEnv, makeMessage, WEBHOOK } from "./test/fixtures.ts";
+
+let fetchSpy: ReturnType<typeof vi.spyOn>;
+
+beforeEach(() => {
+  fetchSpy = vi
+    .spyOn(globalThis, "fetch")
+    .mockResolvedValue(new Response(null, { status: 204 }));
+});
 
 afterEach(() => {
   vi.restoreAllMocks();
 });
 
-describe("parseWebhookMap", () => {
-  describe("positive", () => {
-    it("parses a JSON object into a username map", () => {
-      expect(parseWebhookMap('{"user1":"url"}')).toEqual({ user1: "url" });
-    });
-  });
-
-  describe("semi-positive", () => {
-    it.each([{ raw: "not json" }, { raw: "[1,2]" }])(
-      "rejects out-of-contract input $raw to an empty map",
-      ({ raw }) => {
-        vi.spyOn(console, "error").mockImplementation(() => {});
-        expect(parseWebhookMap(raw)).toEqual({});
-      },
-    );
-  });
-});
-
 describe("email handler", () => {
-  let fetchSpy: ReturnType<typeof vi.spyOn>;
-
-  beforeEach(() => {
-    fetchSpy = vi
-      .spyOn(globalThis, "fetch")
-      .mockResolvedValue(new Response(null, { status: 204 }));
-  });
-
   describe("positive", () => {
     it("forwards every message to {username}@FORWARD_EMAIL_DOMAIN", async () => {
       const { message, forward } = makeMessage("user1@gophercon.jp");
@@ -62,15 +44,18 @@ describe("email handler", () => {
   });
 
   describe("semi-positive", () => {
-    it("forwards without notifying when DISCORD_WEBHOOK_MAP is invalid JSON", async () => {
-      vi.spyOn(console, "error").mockImplementation(() => {});
-      const { message, forward } = makeMessage("user1@gophercon.jp");
+    it.each([{ map: "not json" }, { map: "[1,2]" }])(
+      "forwards without notifying when DISCORD_WEBHOOK_MAP is $map",
+      async ({ map }) => {
+        vi.spyOn(console, "error").mockImplementation(() => {});
+        const { message, forward } = makeMessage("user1@gophercon.jp");
 
-      await worker.email!(message, { ...makeEnv(), DISCORD_WEBHOOK_MAP: "not json" });
+        await worker.email!(message, { ...makeEnv(), DISCORD_WEBHOOK_MAP: map });
 
-      expect(forward).toHaveBeenCalledWith("user1@forward.example.com");
-      expect(fetchSpy).not.toHaveBeenCalled();
-    });
+        expect(forward).toHaveBeenCalledWith("user1@forward.example.com");
+        expect(fetchSpy).not.toHaveBeenCalled();
+      },
+    );
   });
 
   describe("negative", () => {

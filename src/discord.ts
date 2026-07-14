@@ -6,13 +6,13 @@ const EMBED_DESCRIPTION_LIMIT = 4096;
 const EMBED_FIELD_VALUE_LIMIT = 1024;
 const TRUNCATION_MARKER = "\n\n…(truncated)";
 
-export interface DiscordEmbed {
+interface DiscordEmbed {
   title: string;
   description: string;
   fields: { name: string; value: string }[];
 }
 
-export interface DiscordWebhookPayload {
+interface DiscordWebhookPayload {
   embeds: DiscordEmbed[];
 }
 
@@ -34,7 +34,7 @@ export async function notifyDiscord(
   }
 }
 
-export function buildDiscordPayload(email: ParsedEmail): DiscordWebhookPayload {
+function buildDiscordPayload(email: ParsedEmail): DiscordWebhookPayload {
   const body = email.text
     ? truncate(email.text, EMBED_DESCRIPTION_LIMIT, TRUNCATION_MARKER)
     : "(empty body)";

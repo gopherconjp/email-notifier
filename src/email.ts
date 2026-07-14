@@ -47,7 +47,7 @@ export async function parseEmail(
   return { subject, from, text };
 }
 
-export function htmlToText(html: string): string {
+function htmlToText(html: string): string {
   return html
     .replace(/<(script|style)[^>]*>[\s\S]*?<\/\1>/gi, "")
     .replace(/<br\s*\/?>/gi, "\n")

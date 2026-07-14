@@ -29,7 +29,7 @@ export default {
   },
 } satisfies ExportedHandler<Env>;
 
-export function parseWebhookMap(rawJson: string): Record<string, string> {
+function parseWebhookMap(rawJson: string): Record<string, string> {
   try {
     const parsed: unknown = JSON.parse(rawJson);
     if (parsed && typeof parsed === "object" && !Array.isArray(parsed)) {
