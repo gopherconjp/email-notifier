@@ -30,6 +30,8 @@ export function makeMessage(to: string) {
     forward,
     setReject: vi.fn(),
     reply: vi.fn(),
+    // Partial mock: cast through `unknown` to the full message type.
+    // oxlint-disable-next-line typescript/no-restricted-types
   } as unknown as ForwardableEmailMessage;
   return { message, forward };
 }
