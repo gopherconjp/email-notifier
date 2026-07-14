@@ -2,14 +2,8 @@ import { describe, expect, it } from "vitest";
 import { buildDiscordPayload } from "./discord.ts";
 import type { ParsedEmail } from "./email.ts";
 
-interface Embed {
-  title: string;
-  description: string;
-  fields: { name: string; value: string }[];
-}
-
-function embedOf(email: ParsedEmail): Embed {
-  return (buildDiscordPayload(email) as { embeds: Embed[] }).embeds[0]!;
+function embedOf(email: ParsedEmail) {
+  return buildDiscordPayload(email).embeds[0]!;
 }
 
 describe("buildDiscordPayload", () => {
