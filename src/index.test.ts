@@ -1,13 +1,16 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import worker from "./index.ts";
-import { makeEnv, makeMessage, WEBHOOK } from "./test/fixtures.ts";
+import {
+  makeEnv,
+  makeMessage,
+  spyFetchOk,
+  WEBHOOK,
+} from "./test/fixtures.ts";
 
 let fetchSpy: ReturnType<typeof vi.spyOn>;
 
 beforeEach(() => {
-  fetchSpy = vi
-    .spyOn(globalThis, "fetch")
-    .mockResolvedValue(new Response(null, { status: 204 }));
+  fetchSpy = spyFetchOk();
 });
 
 afterEach(() => {

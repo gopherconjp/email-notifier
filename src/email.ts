@@ -54,7 +54,7 @@ function htmlToText(html: string): string {
     .replace(/<\/(p|div|li|tr|h[1-6])>/gi, "\n")
     .replace(/<[^>]+>/g, "")
     .replace(
-      /&(nbsp|amp|lt|gt|quot|#39|apos);/gi,
+      /&(#?\w+);/g,
       (match, entity: string) => HTML_ENTITIES[entity.toLowerCase()] ?? match,
     )
     .replace(/[ \t]+\n/g, "\n")

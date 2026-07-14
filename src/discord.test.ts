@@ -1,15 +1,13 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { notifyDiscord } from "./discord.ts";
 import type { ParsedEmail } from "./email.ts";
-import { WEBHOOK } from "./test/fixtures.ts";
+import { spyFetchError, spyFetchOk, WEBHOOK } from "./test/fixtures.ts";
 
 const ELLIPSIS = "…";
 const TRUNCATION_MARKER = "\n\n…(truncated)";
 
 async function postedEmbed(email: ParsedEmail): Promise<unknown> {
-  const fetchSpy = vi
-    .spyOn(globalThis, "fetch")
-    .mockResolvedValue(new Response(null, { status: 204 }));
+  const fetchSpy = spyFetchOk();
 
   await notifyDiscord(WEBHOOK, email);
 
@@ -71,9 +69,7 @@ describe("notifyDiscord", () => {
 
   describe("negative", () => {
     it("throws when Discord responds with a non-2xx status", async () => {
-      vi.spyOn(globalThis, "fetch").mockResolvedValue(
-        new Response("boom", { status: 500 }),
-      );
+      spyFetchError(500, "boom");
 
       await expect(
         notifyDiscord(WEBHOOK, { subject: "s", from: "f", text: "b" }),
