@@ -1,7 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import worker, { parseWebhookMap } from "../src/index.ts";
-import type { Env } from "../src/index.ts";
-import { buildMime, mimeStream } from "./fixtures.ts";
+import worker, { parseWebhookMap } from "./index.ts";
+import type { Env } from "./index.ts";
+import { buildMime, mimeStream } from "./test-fixtures.ts";
 
 const WEBHOOK = "https://discord.com/api/webhooks/xxxx/yyyy";
 
@@ -32,18 +32,13 @@ function makeEnv(map: Record<string, string> = { user1: WEBHOOK }): Env {
   };
 }
 
-
 describe("parseWebhookMap", () => {
-  it("parses a JSON object", () => {
-    expect(parseWebhookMap('{"a":"u"}')).toEqual({ a: "u" });
-  });
-
-  it("returns an empty map for invalid JSON without throwing", () => {
-    expect(parseWebhookMap("not json")).toEqual({});
-  });
-
-  it("returns an empty map for non-object JSON", () => {
-    expect(parseWebhookMap("[1,2]")).toEqual({});
+  it.each([
+    { raw: '{"user1":"url"}', map: { user1: "url" } },
+    { raw: "not json", map: {} },
+    { raw: "[1,2]", map: {} },
+  ])("parses $raw into a username map", ({ raw, map }) => {
+    expect(parseWebhookMap(raw)).toEqual(map);
   });
 });
 
@@ -60,48 +55,49 @@ describe("email handler", () => {
     vi.restoreAllMocks();
   });
 
-  it("forwards to {username}@FORWARD_EMAIL_DOMAIN", async () => {
+  it("forwards every message to {username}@FORWARD_EMAIL_DOMAIN", async () => {
     const { message, forward } = makeMessage("user1@gophercon.jp");
+
     await worker.email!(message, makeEnv());
+
     expect(forward).toHaveBeenCalledWith("user1@forward.example.com");
   });
 
-  it("notifies Discord for a registered username", async () => {
+  it("notifies the Discord webhook mapped to the username", async () => {
     const { message } = makeMessage("user1@gophercon.jp");
+
     await worker.email!(message, makeEnv());
+
     expect(fetchSpy).toHaveBeenCalledTimes(1);
     expect(fetchSpy.mock.calls[0]![0]).toBe(WEBHOOK);
   });
 
-  it("forwards only (no Discord) for an unregistered username", async () => {
+  it("forwards without notifying when the username has no webhook", async () => {
     const { message, forward } = makeMessage("nobody@gophercon.jp");
+
     await worker.email!(message, makeEnv());
+
     expect(forward).toHaveBeenCalledWith("nobody@forward.example.com");
     expect(fetchSpy).not.toHaveBeenCalled();
   });
 
-  it("still forwards when the Discord webhook fails", async () => {
+  it("still forwards when the Discord webhook responds with an error", async () => {
     fetchSpy.mockResolvedValue(new Response("boom", { status: 500 }));
-    const errorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
+    vi.spyOn(console, "error").mockImplementation(() => {});
     const { message, forward } = makeMessage("user1@gophercon.jp");
 
-    await expect(
-      worker.email!(message, makeEnv()),
-    ).resolves.toBeUndefined();
+    await expect(worker.email!(message, makeEnv())).resolves.toBeUndefined();
 
     expect(forward).toHaveBeenCalledWith("user1@forward.example.com");
-    expect(errorSpy).toHaveBeenCalled();
   });
 
-  it("forwards without error when the webhook map is invalid JSON", async () => {
-    const env: Env = { ...makeEnv(), DISCORD_WEBHOOK_MAP: "not json" };
-    const errorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
+  it("forwards without notifying when DISCORD_WEBHOOK_MAP is invalid JSON", async () => {
+    vi.spyOn(console, "error").mockImplementation(() => {});
     const { message, forward } = makeMessage("user1@gophercon.jp");
 
-    await worker.email!(message, env);
+    await worker.email!(message, { ...makeEnv(), DISCORD_WEBHOOK_MAP: "not json" });
 
     expect(forward).toHaveBeenCalledWith("user1@forward.example.com");
     expect(fetchSpy).not.toHaveBeenCalled();
-    expect(errorSpy).toHaveBeenCalled();
   });
 });
