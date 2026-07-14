@@ -9,8 +9,7 @@ export interface Env {
 export function parseWebhookMap(rawJson: string): Record<string, string> {
   try {
     // Untrusted JSON boundary; narrowed below before use.
-    // oxlint-disable-next-line typescript/no-restricted-types
-    const parsed: unknown = JSON.parse(rawJson);
+    const parsed: unknown = JSON.parse(rawJson); // oxlint-disable-line typescript/no-restricted-types
     if (parsed && typeof parsed === "object" && !Array.isArray(parsed)) {
       return parsed as Record<string, string>;
     }
