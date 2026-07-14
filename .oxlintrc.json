@@ -10,7 +10,7 @@
       "error",
       {
         "types": {
-          "unknown": "Avoid `unknown`; type the value concretely. Where it is genuinely needed (untrusted-input boundary, partial-mock casts), allow it per line with `// oxlint-disable-next-line typescript/no-restricted-types` and a reason."
+          "unknown": "Avoid `unknown`; type the value concretely. Where it is genuinely needed (e.g. the untrusted-input boundary that parses external JSON), allow it per line with `// oxlint-disable-next-line typescript/no-restricted-types` and a reason."
         }
       }
     ]

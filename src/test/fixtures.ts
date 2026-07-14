@@ -20,8 +20,8 @@ const SAMPLE_MIME = buildMime(
 );
 
 export function makeMessage(to: string) {
-  const forward = vi.fn<(rcptTo: string) => Promise<void>>().mockResolvedValue();
-  const message = {
+  const forward = vi.fn<ForwardableEmailMessage["forward"]>();
+  const message: ForwardableEmailMessage = {
     from: "alice@example.com",
     to,
     headers: new Headers(),
@@ -30,9 +30,7 @@ export function makeMessage(to: string) {
     forward,
     setReject: vi.fn(),
     reply: vi.fn(),
-    // Partial mock: cast through `unknown` to the full message type.
-    // oxlint-disable-next-line typescript/no-restricted-types
-  } as unknown as ForwardableEmailMessage;
+  };
   return { message, forward };
 }
 
