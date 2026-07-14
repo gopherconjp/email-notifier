@@ -6,6 +6,29 @@ export interface Env {
   FORWARD_EMAIL_DOMAIN: string;
 }
 
+export default {
+  async email(message, env): Promise<void> {
+    const username = extractUsername(message.to);
+
+    // Forward concurrently with the notification; awaited at the end.
+    const forwardPromise = message.forward(
+      `${username}@${env.FORWARD_EMAIL_DOMAIN}`,
+    );
+
+    try {
+      const webhookUrl = getWebhookMap(env.DISCORD_WEBHOOK_MAP)[username];
+      if (webhookUrl) {
+        const parsed = await parseEmail(message.raw);
+        await notifyDiscord(webhookUrl, parsed);
+      }
+    } catch (error) {
+      console.error("Discord notification failed:", error);
+    }
+
+    await forwardPromise;
+  },
+} satisfies ExportedHandler<Env>;
+
 export function parseWebhookMap(rawJson: string): Record<string, string> {
   try {
     const parsed: unknown = JSON.parse(rawJson);
@@ -32,26 +55,3 @@ function getWebhookMap(rawJson: string): Record<string, string> {
   }
   return cachedMap;
 }
-
-export default {
-  async email(message, env): Promise<void> {
-    const username = extractUsername(message.to);
-
-    // Forward concurrently with the notification; awaited at the end.
-    const forwardPromise = message.forward(
-      `${username}@${env.FORWARD_EMAIL_DOMAIN}`,
-    );
-
-    try {
-      const webhookUrl = getWebhookMap(env.DISCORD_WEBHOOK_MAP)[username];
-      if (webhookUrl) {
-        const parsed = await parseEmail(message.raw);
-        await notifyDiscord(webhookUrl, parsed);
-      }
-    } catch (error) {
-      console.error("Discord notification failed:", error);
-    }
-
-    await forwardPromise;
-  },
-} satisfies ExportedHandler<Env>;
