@@ -23,10 +23,9 @@ jobs:
         with:
           persist-credentials: false
 
-      - name: Install zizmor
-        run: pipx install zizmor==1.27.0
-
-      - name: Audit workflows
-        run: zizmor .
-        env:
-          GH_TOKEN: ${{ github.token }}
+      - uses: zizmorcore/zizmor-action@192e21d79ab29983730a13d1382995c2307fbcaa # v0.5.7
+        with:
+          version: 1.27.0
+          # No GitHub Advanced Security / code scanning on this repo, so don't
+          # upload SARIF — fail the job directly on findings instead.
+          advanced-security: false
