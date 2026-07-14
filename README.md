@@ -53,7 +53,7 @@ bun run typecheck   # tsc --noEmit
 bun run lint        # oxlint
 bun run fmt         # oxfmt (format in place); fmt:check to verify only
 bun run test        # vitest (Workers runtime)
-bun run check       # fmt:check + lint + typecheck + test (what CI runs)
+bun run check       # fmt:check + lint + typecheck + test
 bun run build       # vite build
 bun run deploy      # wrangler deploy
 ```
@@ -61,16 +61,7 @@ bun run deploy      # wrangler deploy
 After deploying, route incoming mail to this Worker in the Cloudflare dashboard
 (Email → Email Routing → Email Workers) and set the production secrets.
 
-## CI
-
-[`.github/workflows/ci.yml`](.github/workflows/ci.yml) runs on every push to
-`main` and every pull request. Both jobs install the mise-pinned toolchain, and
-together they cover the same ground as `bun run check`:
-
-- **`lint`** — `oxfmt --check`, `oxlint`, and `tsc --noEmit`.
-- **`test`** — `vitest`.
-
-Third-party actions are pinned by commit SHA (with the version in a comment).
+## Lint & format
 
 Lint/format use [oxc](https://oxc.rs) (oxlint/oxfmt), configured in
 [`.oxlintrc.json`](.oxlintrc.json) and [`.oxfmtrc.json`](.oxfmtrc.json). Two
