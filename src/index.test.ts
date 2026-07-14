@@ -2,27 +2,21 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import worker, { parseWebhookMap } from "./index.ts";
 import { makeEnv, makeMessage, WEBHOOK } from "./test/fixtures.ts";
 
-describe("parseWebhookMap", () => {
-  it.each([
-    { raw: '{"user1":"url"}', map: { user1: "url" } },
-    { raw: "not json", map: {} },
-    { raw: "[1,2]", map: {} },
-  ])("parses $raw into a username map", ({ raw, map }) => {
-    expect(parseWebhookMap(raw)).toEqual(map);
-  });
+let fetchSpy: ReturnType<typeof vi.spyOn>;
+
+beforeEach(() => {
+  fetchSpy = vi
+    .spyOn(globalThis, "fetch")
+    .mockResolvedValue(new Response(null, { status: 204 }));
 });
 
-describe("email handler", () => {
-  let fetchSpy: ReturnType<typeof vi.spyOn>;
+afterEach(() => {
+  vi.restoreAllMocks();
+});
 
-  beforeEach(() => {
-    fetchSpy = vi
-      .spyOn(globalThis, "fetch")
-      .mockResolvedValue(new Response(null, { status: 204 }));
-  });
-
-  afterEach(() => {
-    vi.restoreAllMocks();
+describe("positive", () => {
+  it("parseWebhookMap parses a JSON object into a username map", () => {
+    expect(parseWebhookMap('{"user1":"url"}')).toEqual({ user1: "url" });
   });
 
   it("forwards every message to {username}@FORWARD_EMAIL_DOMAIN", async () => {
@@ -41,7 +35,9 @@ describe("email handler", () => {
     expect(fetchSpy).toHaveBeenCalledTimes(1);
     expect(fetchSpy.mock.calls[0]![0]).toBe(WEBHOOK);
   });
+});
 
+describe("semi-positive", () => {
   it("forwards without notifying when the username has no webhook", async () => {
     const { message, forward } = makeMessage("nobody@gophercon.jp");
 
@@ -50,6 +46,16 @@ describe("email handler", () => {
     expect(forward).toHaveBeenCalledWith("nobody@forward.example.com");
     expect(fetchSpy).not.toHaveBeenCalled();
   });
+});
+
+describe("negative", () => {
+  it.each([{ raw: "not json" }, { raw: "[1,2]" }])(
+    "parseWebhookMap returns an empty map for $raw",
+    ({ raw }) => {
+      vi.spyOn(console, "error").mockImplementation(() => {});
+      expect(parseWebhookMap(raw)).toEqual({});
+    },
+  );
 
   it("still forwards when the Discord webhook responds with an error", async () => {
     fetchSpy.mockResolvedValue(new Response("boom", { status: 500 }));
