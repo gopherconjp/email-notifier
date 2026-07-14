@@ -33,10 +33,10 @@ The `email()` handler ([`src/index.ts`](src/index.ts)):
 The Worker reads two values, provided as **Workers secrets** in production and
 as **dev vars** locally:
 
-| Name                   | Description                                        |
-| ---------------------- | -------------------------------------------------- |
+| Name                   | Description                                         |
+| ---------------------- | --------------------------------------------------- |
 | `DISCORD_WEBHOOK_MAP`  | JSON object mapping username → Discord webhook URL. |
-| `FORWARD_EMAIL_DOMAIN` | Domain that incoming mail is forwarded to.         |
+| `FORWARD_EMAIL_DOMAIN` | Domain that incoming mail is forwarded to.          |
 
 Both are edited in one place — a git-ignored **`.env.yaml`** — and applied via
 the scripts below. Copy the template to start:
@@ -89,10 +89,37 @@ bun run gen         # generate everything: gen:cf-types + gen:dev-vars
 bun run gen:cf-types # wrangler types -> worker-configuration.d.ts
 bun run dev         # vite dev (@cloudflare/vite-plugin), loads .dev.vars
 bun run typecheck   # tsc --noEmit
+bun run lint        # oxlint
+bun run lint:fix    # oxlint --fix
+bun run fmt         # oxfmt (format in place)
+bun run fmt:check   # oxfmt --check (fails on unformatted files)
 bun run test        # vitest (runs in the Workers runtime via workers pool)
+bun run check       # fmt:check + lint + typecheck + test (what CI runs)
 bun run build       # vite build
 bun run deploy      # wrangler deploy
 ```
+
+## CI
+
+[`.github/workflows/ci.yml`](.github/workflows/ci.yml) runs on every push to
+`main` and every pull request. It installs the pinned toolchain with
+[mise](https://mise.jdx.dev), then runs formatting, lint, typecheck, and tests
+— the same as `bun run check` locally.
+
+Linting and formatting use [oxc](https://oxc.rs):
+[oxlint](https://oxc.rs/docs/guide/usage/linter.html) and
+[oxfmt](https://oxc.rs/docs/guide/usage/formatter.html), configured in
+[`.oxlintrc.json`](.oxlintrc.json) and [`.oxfmtrc.json`](.oxfmtrc.json).
+
+Two type rules are enforced beyond the defaults:
+
+- **`any` is banned** (`typescript/no-explicit-any`) — it disables type
+  checking.
+- **`unknown` is banned as a type** (`typescript/no-restricted-types`) —
+  _except_ at the untrusted-input boundary (`src/index.ts`, which parses the
+  `DISCORD_WEBHOOK_MAP` JSON) and in test files (which need `as unknown as` for
+  partial mocks). Elsewhere, type values concretely instead of leaking
+  `unknown` through the code.
 
 After deploying, route your domain's incoming mail to this Worker in the
 Cloudflare dashboard (Email → Email Routing → Email Workers), and make sure the

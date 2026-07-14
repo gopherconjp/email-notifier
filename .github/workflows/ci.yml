@@ -1,0 +1,40 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  check:
+    name: format / lint / typecheck / test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      # Install the toolchain pinned in mise.toml (bun + node).
+      - uses: jdx/mise-action@v2
+
+      # Locked, reproducible install. bunfig.toml's minimumReleaseAge does not
+      # affect already-locked versions, so the supply-chain cooldown still holds.
+      - name: Install dependencies
+        run: bun install --frozen-lockfile
+
+      - name: Check formatting (oxfmt)
+        run: bun run fmt:check
+
+      - name: Lint (oxlint)
+        run: bun run lint
+
+      - name: Typecheck
+        run: bun run typecheck
+
+      - name: Test
+        run: bun run test
