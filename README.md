@@ -50,25 +50,10 @@ bun install
 bun run gen         # gen:cf-types + gen:dev-vars
 bun run dev         # vite dev, loads .dev.vars
 bun run typecheck   # tsc --noEmit
-bun run lint        # oxlint
-bun run fmt         # oxfmt (format in place); fmt:check to verify only
 bun run test        # vitest (Workers runtime)
-bun run check       # fmt:check + lint + typecheck + test
 bun run build       # vite build
 bun run deploy      # wrangler deploy
 ```
 
 After deploying, route incoming mail to this Worker in the Cloudflare dashboard
 (Email → Email Routing → Email Workers) and set the production secrets.
-
-## Lint & format
-
-Lint/format use [oxc](https://oxc.rs) (oxlint/oxfmt), configured in
-[`.oxlintrc.json`](.oxlintrc.json) and [`.oxfmtrc.json`](.oxfmtrc.json). Two
-type rules are enforced on top of the defaults:
-
-- **`any` is banned** (`typescript/no-explicit-any`).
-- **`unknown` is banned as a type** (`typescript/no-restricted-types`), _except_
-  at the untrusted-input boundary (`src/index.ts`, which parses
-  `DISCORD_WEBHOOK_MAP`) and in test files (partial-mock `as unknown as` casts).
-  Elsewhere, use a concrete type.
