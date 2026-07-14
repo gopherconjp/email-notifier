@@ -6,7 +6,28 @@ export interface Env {
   FORWARD_EMAIL_DOMAIN: string;
 }
 
-export function parseWebhookMap(rawJson: string): Record<string, string> {
+export default {
+  async email(message, env): Promise<void> {
+    const username = extractUsername(message.to);
+
+    // Forward concurrently with the notification; awaited at the end.
+    const forwardPromise = message.forward(`${username}@${env.FORWARD_EMAIL_DOMAIN}`);
+
+    try {
+      const webhookUrl = getWebhookMap(env.DISCORD_WEBHOOK_MAP)[username];
+      if (webhookUrl) {
+        const parsed = await parseEmail(message.raw);
+        await notifyDiscord(webhookUrl, parsed);
+      }
+    } catch (error) {
+      console.error("Discord notification failed:", error);
+    }
+
+    await forwardPromise;
+  },
+} satisfies ExportedHandler<Env>;
+
+function parseWebhookMap(rawJson: string): Record<string, string> {
   try {
     // Untrusted JSON boundary; narrowed below before use.
     const parsed: unknown = JSON.parse(rawJson); // oxlint-disable-line typescript/no-restricted-types
@@ -33,24 +54,3 @@ function getWebhookMap(rawJson: string): Record<string, string> {
   }
   return cachedMap;
 }
-
-export default {
-  async email(message, env): Promise<void> {
-    const username = extractUsername(message.to);
-
-    // Forward concurrently with the notification; awaited at the end.
-    const forwardPromise = message.forward(`${username}@${env.FORWARD_EMAIL_DOMAIN}`);
-
-    try {
-      const webhookUrl = getWebhookMap(env.DISCORD_WEBHOOK_MAP)[username];
-      if (webhookUrl) {
-        const parsed = await parseEmail(message.raw);
-        await notifyDiscord(webhookUrl, parsed);
-      }
-    } catch (error) {
-      console.error("Discord notification failed:", error);
-    }
-
-    await forwardPromise;
-  },
-} satisfies ExportedHandler<Env>;

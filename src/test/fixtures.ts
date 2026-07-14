@@ -14,19 +14,15 @@ export function mimeStream(mime: string): ReadableStream<Uint8Array> {
   return new Response(mime).body!;
 }
 
-const SAMPLE_MIME = buildMime(
-  { From: "Alice <alice@example.com>", To: "user1@gophercon.jp", Subject: "Hello" },
-  "Body.",
-);
-
 export function makeMessage(to: string) {
+  const mime = buildMime({ From: "Alice <alice@example.com>", To: to, Subject: "Hello" }, "Body.");
   const forward = vi.fn<ForwardableEmailMessage["forward"]>();
   const message: ForwardableEmailMessage = {
     from: "alice@example.com",
     to,
     headers: new Headers(),
-    raw: mimeStream(SAMPLE_MIME),
-    rawSize: SAMPLE_MIME.length,
+    raw: mimeStream(mime),
+    rawSize: mime.length,
     forward,
     setReject: vi.fn(),
     reply: vi.fn(),
@@ -39,4 +35,12 @@ export function makeEnv(map: Record<string, string> = { user1: WEBHOOK }): Env {
     DISCORD_WEBHOOK_MAP: JSON.stringify(map),
     FORWARD_EMAIL_DOMAIN: "forward.example.com",
   };
+}
+
+export function spyFetchOk() {
+  return vi.spyOn(globalThis, "fetch").mockResolvedValue(new Response(null, { status: 204 }));
+}
+
+export function spyFetchError(status: number, body = "") {
+  return vi.spyOn(globalThis, "fetch").mockResolvedValue(new Response(body, { status }));
 }
