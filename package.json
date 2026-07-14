@@ -12,8 +12,7 @@
     "typecheck": "tsc --noEmit",
     "gen": "bun run gen:cf-types && bun run gen:dev-vars",
     "gen:cf-types": "wrangler types",
-    "gen:dev-vars": "bun run scripts/gen-dev-vars.ts",
-    "set:secrets": "bun run scripts/set-secrets.ts"
+    "gen:dev-vars": "bun run scripts/gen-dev-vars.ts"
   },
   "dependencies": {
     "postal-mime": "^2.7.5"

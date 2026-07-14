@@ -61,15 +61,11 @@ bun install
 
 # Generate `.dev.vars` from `.env.yaml` for local development.
 bun run gen:dev-vars
-
-# Upload the values as production Workers secrets (via `wrangler secret bulk`).
-bun run set:secrets
 ```
 
-`set:secrets` overwrites the two managed secrets. It is **additive**: any other
-production-only secret you set separately with `wrangler secret put` is
-preserved. Because `DISCORD_WEBHOOK_MAP` is a single secret holding the whole
-JSON map, re-running fully replaces the map (removed users disappear).
+For production, set the same two values as Workers secrets — via
+`wrangler secret put DISCORD_WEBHOOK_MAP` / `wrangler secret put
+FORWARD_EMAIL_DOMAIN`, or in the Cloudflare dashboard.
 
 > `.env.yaml`, `.dev.vars`, and other secret files are git-ignored. Only
 > `.env.yaml.example` is committed.
@@ -99,5 +95,5 @@ bun run deploy      # wrangler deploy
 ```
 
 After deploying, route your domain's incoming mail to this Worker in the
-Cloudflare dashboard (Email → Email Routing → Email Workers), then set the
-production secrets with `bun run set:secrets`.
+Cloudflare dashboard (Email → Email Routing → Email Workers), and make sure the
+two secrets are set for production (see Configuration above).
