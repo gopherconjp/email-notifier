@@ -26,7 +26,7 @@
       }
     },
     {
-      "files": ["**/*.test.ts", "src/test-fixtures.ts"],
+      "files": ["**/*.test.ts", "src/test/fixtures.ts"],
       "rules": {
         "typescript/no-restricted-types": "off"
       }

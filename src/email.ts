@@ -1,17 +1,8 @@
 import PostalMime from "postal-mime";
 
-/**
- * Extract the username (local part) from an email address.
- *
- * Handles bare addresses ("user1@gophercon.jp") as well as the
- * "Display Name <user1@gophercon.jp>" form, returning a lower-cased username
- * so lookups against the webhook map are case-insensitive. Returns an empty
- * string when no local part can be found.
- */
 export function extractUsername(address: string): string {
   if (!address) return "";
 
-  // Prefer the address inside angle brackets when present.
   const angle = address.match(/<([^>]+)>/);
   const raw = (angle ? angle[1] : address).trim();
 
@@ -20,20 +11,12 @@ export function extractUsername(address: string): string {
   return local.trim().toLowerCase();
 }
 
-/** Parsed, human-readable representation of an incoming email. */
 export interface ParsedEmail {
   subject: string;
   from: string;
   text: string;
 }
 
-/**
- * Parse an incoming email into subject / from / plain-text body.
- *
- * postal-mime handles multipart, transfer encodings (base64/quoted-printable)
- * and character sets. When only an HTML body is available it is converted to a
- * best-effort plain-text representation.
- */
 export async function parseEmail(
   raw: ReadableStream<Uint8Array> | ArrayBuffer,
 ): Promise<ParsedEmail> {
@@ -67,11 +50,6 @@ const HTML_ENTITIES: Record<string, string> = {
   apos: "'",
 };
 
-/**
- * Minimal, dependency-free HTML -> text conversion. Not a full renderer: it
- * strips scripts/styles and tags, decodes a handful of common entities, and
- * collapses excess whitespace. Good enough for a readable Discord notification.
- */
 export function htmlToText(html: string): string {
   return html
     .replace(/<(script|style)[^>]*>[\s\S]*?<\/\1>/gi, "")
