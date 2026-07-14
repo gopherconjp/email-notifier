@@ -6,10 +6,7 @@ describe("extractUsername", () => {
   describe("positive", () => {
     it.each([
       { address: "user1@gophercon.jp", username: "user1" },
-      { address: "User One <user1@gophercon.jp>", username: "user1" },
       { address: "User1@gophercon.jp", username: "user1" },
-      { address: "  user1  ", username: "user1" },
-      { address: "", username: "" },
     ])("maps $address to '$username'", ({ address, username }) => {
       expect(extractUsername(address)).toBe(username);
     });

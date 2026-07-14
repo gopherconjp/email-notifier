@@ -17,14 +17,8 @@ export interface ParsedEmail {
 }
 
 export function extractUsername(address: string): string {
-  if (!address) return "";
-
-  const angle = address.match(/<([^>]+)>/);
-  const raw = (angle ? angle[1] : address).trim();
-
-  const at = raw.lastIndexOf("@");
-  const local = at === -1 ? raw : raw.slice(0, at);
-  return local.trim().toLowerCase();
+  const at = address.lastIndexOf("@");
+  return address.slice(0, at).toLowerCase();
 }
 
 export async function parseEmail(

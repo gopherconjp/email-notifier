@@ -57,5 +57,5 @@ export function buildDiscordPayload(email: ParsedEmail): DiscordWebhookPayload {
 
 function truncate(value: string, limit: number, marker = "…"): string {
   if (value.length <= limit) return value;
-  return value.slice(0, Math.max(0, limit - marker.length)) + marker;
+  return value.slice(0, limit - marker.length) + marker;
 }
