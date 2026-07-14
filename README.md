@@ -89,6 +89,8 @@ Dependency installs enforce a 3-day release cooldown (`minimumReleaseAge` in
 versions.
 
 ```bash
+bun run gen         # generate everything: gen:cf-types + gen:dev-vars
+bun run gen:cf-types # wrangler types -> worker-configuration.d.ts
 bun run dev         # vite dev (@cloudflare/vite-plugin), loads .dev.vars
 bun run typecheck   # tsc --noEmit
 bun run test        # vitest (runs in the Workers runtime via workers pool)
