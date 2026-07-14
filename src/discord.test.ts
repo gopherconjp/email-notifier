@@ -33,11 +33,14 @@ describe("buildDiscordPayload", () => {
       expect(embed.description).toContain("…(truncated)");
     });
 
-    it.each<{ field: "title" | "description"; email: ParsedEmail; limit: number }>([
-      { field: "title", email: { subject: "T".repeat(400), from: "f", text: "b" }, limit: 256 },
-      { field: "description", email: { subject: "s", from: "f", text: "x".repeat(5000) }, limit: 4096 },
-    ])("keeps the embed $field within Discord's $limit-character limit", ({ field, email, limit }) => {
-      expect(embedOf(email)[field].length).toBeLessThanOrEqual(limit);
+    it("caps the title at Discord's 256-character limit", () => {
+      const embed = embedOf({ subject: "T".repeat(400), from: "f", text: "b" });
+      expect(embed.title.length).toBeLessThanOrEqual(256);
+    });
+
+    it("caps the description at Discord's 4096-character limit", () => {
+      const embed = embedOf({ subject: "s", from: "f", text: "x".repeat(5000) });
+      expect(embed.description.length).toBeLessThanOrEqual(4096);
     });
   });
 });
