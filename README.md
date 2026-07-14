@@ -64,9 +64,13 @@ After deploying, route incoming mail to this Worker in the Cloudflare dashboard
 ## CI
 
 [`.github/workflows/ci.yml`](.github/workflows/ci.yml) runs on every push to
-`main` and every pull request: it installs the mise-pinned toolchain, then runs
-`oxfmt --check`, `oxlint`, `tsc --noEmit`, and `vitest` — the same as
-`bun run check`.
+`main` and every pull request. Both jobs install the mise-pinned toolchain, and
+together they cover the same ground as `bun run check`:
+
+- **`lint`** — `oxfmt --check`, `oxlint`, and `tsc --noEmit`.
+- **`test`** — `vitest`.
+
+Third-party actions are pinned by commit SHA (with the version in a comment).
 
 Lint/format use [oxc](https://oxc.rs) (oxlint/oxfmt), configured in
 [`.oxlintrc.json`](.oxlintrc.json) and [`.oxfmtrc.json`](.oxfmtrc.json). Two
