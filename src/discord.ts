@@ -1,5 +1,11 @@
 import type { ParsedEmail } from "./email.ts";
 
+// Discord embed limits (https://discord.com/developers/docs/resources/message#embed-object-embed-limits).
+const EMBED_TITLE_LIMIT = 256;
+const EMBED_DESCRIPTION_LIMIT = 4096;
+const EMBED_FIELD_VALUE_LIMIT = 1024;
+const TRUNCATION_MARKER = "\n\n…(truncated)";
+
 export interface DiscordEmbed {
   title: string;
   description: string;
@@ -53,9 +59,3 @@ function truncate(value: string, limit: number, marker = "…"): string {
   if (value.length <= limit) return value;
   return value.slice(0, Math.max(0, limit - marker.length)) + marker;
 }
-
-// Discord embed limits (https://discord.com/developers/docs/resources/message#embed-object-embed-limits).
-const EMBED_TITLE_LIMIT = 256;
-const EMBED_DESCRIPTION_LIMIT = 4096;
-const EMBED_FIELD_VALUE_LIMIT = 1024;
-const TRUNCATION_MARKER = "\n\n…(truncated)";

@@ -1,5 +1,21 @@
 import PostalMime from "postal-mime";
 
+const HTML_ENTITIES: Record<string, string> = {
+  nbsp: " ",
+  amp: "&",
+  lt: "<",
+  gt: ">",
+  quot: '"',
+  "#39": "'",
+  apos: "'",
+};
+
+export interface ParsedEmail {
+  subject: string;
+  from: string;
+  text: string;
+}
+
 export function extractUsername(address: string): string {
   if (!address) return "";
 
@@ -9,12 +25,6 @@ export function extractUsername(address: string): string {
   const at = raw.lastIndexOf("@");
   const local = at === -1 ? raw : raw.slice(0, at);
   return local.trim().toLowerCase();
-}
-
-export interface ParsedEmail {
-  subject: string;
-  from: string;
-  text: string;
 }
 
 export async function parseEmail(
@@ -39,16 +49,6 @@ export async function parseEmail(
 
   return { subject, from, text };
 }
-
-const HTML_ENTITIES: Record<string, string> = {
-  nbsp: " ",
-  amp: "&",
-  lt: "<",
-  gt: ">",
-  quot: '"',
-  "#39": "'",
-  apos: "'",
-};
 
 export function htmlToText(html: string): string {
   return html
