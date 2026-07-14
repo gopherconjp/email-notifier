@@ -18,6 +18,9 @@ export interface ParsedEmail {
 
 export function extractUsername(address: string): string {
   const at = address.lastIndexOf("@");
+  if (at === -1) {
+    throw new Error(`Not an email address: ${address}`);
+  }
   return address.slice(0, at).toLowerCase();
 }
 

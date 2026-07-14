@@ -11,6 +11,12 @@ describe("extractUsername", () => {
       expect(extractUsername(address)).toBe(username);
     });
   });
+
+  describe("negative", () => {
+    it("throws when the input is not an email address", () => {
+      expect(() => extractUsername("not-an-address")).toThrow();
+    });
+  });
 });
 
 describe("htmlToText", () => {
