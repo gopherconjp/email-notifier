@@ -1,5 +1,15 @@
 import type { ParsedEmail } from "./email.ts";
 
+export interface DiscordEmbed {
+  title: string;
+  description: string;
+  fields: { name: string; value: string }[];
+}
+
+export interface DiscordWebhookPayload {
+  embeds: DiscordEmbed[];
+}
+
 export async function notifyDiscord(
   webhookUrl: string,
   email: ParsedEmail,
@@ -18,7 +28,7 @@ export async function notifyDiscord(
   }
 }
 
-export function buildDiscordPayload(email: ParsedEmail): unknown {
+export function buildDiscordPayload(email: ParsedEmail): DiscordWebhookPayload {
   const body = email.text
     ? truncate(email.text, EMBED_DESCRIPTION_LIMIT, TRUNCATION_MARKER)
     : "(empty body)";
