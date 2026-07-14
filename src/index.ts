@@ -25,19 +25,18 @@ export function parseWebhookMap(rawJson: string): Record<string, string> {
   return {};
 }
 
-// Parsed once per Worker instance, lazily on the first incoming email.
-let webhookMap: Record<string, string> | undefined;
+// Cache the parsed map keyed on the raw secret. In production the secret is
+// constant, so this parses exactly once per Worker instance; when the value
+// changes (e.g. between tests) it is re-parsed.
+let cachedRaw: string | undefined;
+let cachedMap: Record<string, string> = {};
 
 function getWebhookMap(rawJson: string): Record<string, string> {
-  if (webhookMap === undefined) {
-    webhookMap = parseWebhookMap(rawJson);
+  if (rawJson !== cachedRaw) {
+    cachedRaw = rawJson;
+    cachedMap = parseWebhookMap(rawJson);
   }
-  return webhookMap;
-}
-
-/** Test-only: clear the cached webhook map so a fresh secret can be parsed. */
-export function resetWebhookMapCache(): void {
-  webhookMap = undefined;
+  return cachedMap;
 }
 
 export default {

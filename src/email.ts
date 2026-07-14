@@ -41,11 +41,13 @@ export async function parseEmail(
 
   const subject = email.subject?.trim() || "(no subject)";
 
-  const from = email.from
-    ? email.from.name
-      ? `${email.from.name} <${email.from.address ?? ""}>`
-      : (email.from.address ?? "(unknown sender)")
-    : "(unknown sender)";
+  const sender = email.from;
+  let from = "(unknown sender)";
+  if (sender?.name) {
+    from = `${sender.name} <${sender.address ?? ""}>`;
+  } else if (sender?.address) {
+    from = sender.address;
+  }
 
   let text = email.text?.trim() ?? "";
   if (!text && email.html) {
@@ -54,6 +56,16 @@ export async function parseEmail(
 
   return { subject, from, text };
 }
+
+const HTML_ENTITIES: Record<string, string> = {
+  nbsp: " ",
+  amp: "&",
+  lt: "<",
+  gt: ">",
+  quot: '"',
+  "#39": "'",
+  apos: "'",
+};
 
 /**
  * Minimal, dependency-free HTML -> text conversion. Not a full renderer: it
@@ -66,12 +78,10 @@ export function htmlToText(html: string): string {
     .replace(/<br\s*\/?>/gi, "\n")
     .replace(/<\/(p|div|li|tr|h[1-6])>/gi, "\n")
     .replace(/<[^>]+>/g, "")
-    .replace(/&nbsp;/gi, " ")
-    .replace(/&amp;/gi, "&")
-    .replace(/&lt;/gi, "<")
-    .replace(/&gt;/gi, ">")
-    .replace(/&quot;/gi, '"')
-    .replace(/&#39;|&apos;/gi, "'")
+    .replace(
+      /&(nbsp|amp|lt|gt|quot|#39|apos);/gi,
+      (match, entity: string) => HTML_ENTITIES[entity.toLowerCase()] ?? match,
+    )
     .replace(/[ \t]+\n/g, "\n")
     .replace(/\n{3,}/g, "\n\n")
     .trim();

@@ -20,8 +20,7 @@ function main(): void {
     [
       "# Generated from .env.yaml by `bun run gen:dev-vars`. Do not edit by hand.",
       "# Used by `vite dev` / `wrangler dev` for local development.",
-      dotenvLine("DISCORD_WEBHOOK_MAP", secrets.DISCORD_WEBHOOK_MAP),
-      dotenvLine("FORWARD_EMAIL_DOMAIN", secrets.FORWARD_EMAIL_DOMAIN),
+      ...Object.entries(secrets).map(([key, value]) => dotenvLine(key, value)),
     ].join("\n") + "\n";
 
   writeFileSync(DEV_VARS_PATH, contents, { mode: 0o600 });

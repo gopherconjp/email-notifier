@@ -1,17 +1,14 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import worker, { parseWebhookMap, resetWebhookMapCache } from "../src/index.ts";
+import worker, { parseWebhookMap } from "../src/index.ts";
 import type { Env } from "../src/index.ts";
+import { buildMime, mimeStream } from "./fixtures.ts";
 
 const WEBHOOK = "https://discord.com/api/webhooks/xxxx/yyyy";
 
-const SAMPLE_MIME = [
-  "From: Alice <alice@example.com>",
-  "To: user1@gophercon.jp",
-  "Subject: Hello",
-  "",
+const SAMPLE_MIME = buildMime(
+  { From: "Alice <alice@example.com>", To: "user1@gophercon.jp", Subject: "Hello" },
   "Body.",
-  "",
-].join("\r\n");
+);
 
 function makeMessage(to: string) {
   const forward = vi.fn<(rcptTo: string) => Promise<void>>().mockResolvedValue();
@@ -19,7 +16,7 @@ function makeMessage(to: string) {
     from: "alice@example.com",
     to,
     headers: new Headers(),
-    raw: new Response(SAMPLE_MIME).body!,
+    raw: mimeStream(SAMPLE_MIME),
     rawSize: SAMPLE_MIME.length,
     forward,
     setReject: vi.fn(),
@@ -54,7 +51,6 @@ describe("email handler", () => {
   let fetchSpy: ReturnType<typeof vi.spyOn>;
 
   beforeEach(() => {
-    resetWebhookMapCache();
     fetchSpy = vi
       .spyOn(globalThis, "fetch")
       .mockResolvedValue(new Response(null, { status: 204 }));

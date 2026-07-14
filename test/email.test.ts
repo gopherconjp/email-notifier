@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { extractUsername, htmlToText, parseEmail } from "../src/email.ts";
+import { buildMime, mimeStream } from "./fixtures.ts";
 
 describe("extractUsername", () => {
   it("extracts the local part of a bare address", () => {
@@ -42,25 +43,25 @@ describe("htmlToText", () => {
 });
 
 describe("parseEmail", () => {
-  const mime = [
-    "From: Alice <alice@example.com>",
-    "To: user1@gophercon.jp",
-    "Subject: Hello World",
-    "Content-Type: text/plain; charset=utf-8",
-    "",
+  const mime = buildMime(
+    {
+      From: "Alice <alice@example.com>",
+      To: "user1@gophercon.jp",
+      Subject: "Hello World",
+      "Content-Type": "text/plain; charset=utf-8",
+    },
     "This is the body.",
-    "",
-  ].join("\r\n");
+  );
 
   it("extracts subject, from and text body", async () => {
-    const parsed = await parseEmail(new Response(mime).body!);
+    const parsed = await parseEmail(mimeStream(mime));
     expect(parsed.subject).toBe("Hello World");
     expect(parsed.from).toBe("Alice <alice@example.com>");
     expect(parsed.text).toContain("This is the body.");
   });
 
   it("falls back to sensible defaults for a minimal message", async () => {
-    const parsed = await parseEmail(new Response("\r\n\r\nbody only").body!);
+    const parsed = await parseEmail(mimeStream("\r\n\r\nbody only"));
     expect(parsed.subject).toBe("(no subject)");
     expect(parsed.from).toBe("(unknown sender)");
   });
