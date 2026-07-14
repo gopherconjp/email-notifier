@@ -8,8 +8,7 @@ export interface Env {
 
 export function parseWebhookMap(rawJson: string): Record<string, string> {
   try {
-    // Untrusted-input boundary: JSON.parse returns untrusted data that we narrow
-    // below before use, so `unknown` is the correct (and safe) type here.
+    // Untrusted JSON boundary; narrowed below before use.
     // oxlint-disable-next-line typescript/no-restricted-types
     const parsed: unknown = JSON.parse(rawJson);
     if (parsed && typeof parsed === "object" && !Array.isArray(parsed)) {
