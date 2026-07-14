@@ -57,11 +57,16 @@ describe("parseEmail", () => {
       });
     });
 
-    it("falls back to placeholders for a message without headers", async () => {
-      const parsed = await parseEmail(mimeStream("\r\n\r\nbody only"));
+    it("falls back to '(no subject)' for an email with no subject", async () => {
+      const mime = buildMime(
+        { From: "Bob <bob@example.com>", To: "user1@gophercon.jp" },
+        "Body without a subject.",
+      );
+
+      const parsed = await parseEmail(mimeStream(mime));
 
       expect(parsed.subject).toBe("(no subject)");
-      expect(parsed.from).toBe("(unknown sender)");
+      expect(parsed.from).toBe("Bob <bob@example.com>");
     });
   });
 });
