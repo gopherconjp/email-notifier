@@ -76,6 +76,18 @@ JSON map, re-running fully replaces the map (removed users disappear).
 
 ## Development
 
+The toolchain (bun, node) is pinned in [`mise.toml`](mise.toml). With
+[mise](https://mise.jdx.dev) installed:
+
+```bash
+mise install   # install the pinned bun/node
+bun install    # install dependencies
+```
+
+Dependency installs enforce a 3-day release cooldown (`minimumReleaseAge` in
+[`bunfig.toml`](bunfig.toml)) to reduce supply-chain risk from freshly published
+versions.
+
 ```bash
 bun run dev         # vite dev (@cloudflare/vite-plugin), loads .dev.vars
 bun run typecheck   # tsc --noEmit

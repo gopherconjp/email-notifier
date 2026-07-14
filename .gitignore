@@ -158,5 +158,9 @@ vite.config.ts.timestamp-*
 # Generated Worker types (`wrangler types`)
 worker-configuration.d.ts
 
+# mise local overrides (the tracked mise.toml holds the shared config)
+mise.local.toml
+.mise.local.toml
+
 # macOS
 .DS_Store
