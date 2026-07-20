@@ -53,10 +53,7 @@ function htmlToText(html: string): string {
     .replace(/<br\s*\/?>/gi, "\n")
     .replace(/<\/(p|div|li|tr|h[1-6])>/gi, "\n")
     .replace(/<[^>]+>/g, "")
-    .replace(
-      /&(#?\w+);/g,
-      (match, entity: string) => HTML_ENTITIES[entity.toLowerCase()] ?? match,
-    )
+    .replace(/&(#?\w+);/g, (match, entity: string) => HTML_ENTITIES[entity.toLowerCase()] ?? match)
     .replace(/[ \t]+\n/g, "\n")
     .replace(/\n{3,}/g, "\n\n")
     .trim();
