@@ -40,23 +40,17 @@ export function loadConfig(path: string = CONFIG_PATH): WorkerSecrets {
 
   const map = data.DISCORD_WEBHOOK_MAP;
   if (!map || typeof map !== "object" || Array.isArray(map)) {
-    throw new Error(
-      `DISCORD_WEBHOOK_MAP missing or not a mapping in ${path}.`,
-    );
+    throw new Error(`DISCORD_WEBHOOK_MAP missing or not a mapping in ${path}.`);
   }
   for (const [user, url] of Object.entries(map)) {
     if (typeof url !== "string") {
-      throw new Error(
-        `DISCORD_WEBHOOK_MAP["${user}"] must be a string URL in ${path}.`,
-      );
+      throw new Error(`DISCORD_WEBHOOK_MAP["${user}"] must be a string URL in ${path}.`);
     }
   }
 
   const domain = data.FORWARD_EMAIL_DOMAIN;
   if (!domain || typeof domain !== "string") {
-    throw new Error(
-      `FORWARD_EMAIL_DOMAIN missing or not a string in ${path}.`,
-    );
+    throw new Error(`FORWARD_EMAIL_DOMAIN missing or not a string in ${path}.`);
   }
 
   return {

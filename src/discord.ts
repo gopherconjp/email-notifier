@@ -16,10 +16,7 @@ interface DiscordWebhookPayload {
   embeds: DiscordEmbed[];
 }
 
-export async function notifyDiscord(
-  webhookUrl: string,
-  email: ParsedEmail,
-): Promise<void> {
+export async function notifyDiscord(webhookUrl: string, email: ParsedEmail): Promise<void> {
   const response = await fetch(webhookUrl, {
     method: "POST",
     headers: { "content-type": "application/json" },

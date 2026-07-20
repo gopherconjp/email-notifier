@@ -11,9 +11,7 @@ export default {
     const username = extractUsername(message.to);
 
     // Forward concurrently with the notification; awaited at the end.
-    const forwardPromise = message.forward(
-      `${username}@${env.FORWARD_EMAIL_DOMAIN}`,
-    );
+    const forwardPromise = message.forward(`${username}@${env.FORWARD_EMAIL_DOMAIN}`);
 
     try {
       const webhookUrl = getWebhookMap(env.DISCORD_WEBHOOK_MAP)[username];
@@ -31,7 +29,8 @@ export default {
 
 function parseWebhookMap(rawJson: string): Record<string, string> {
   try {
-    const parsed: unknown = JSON.parse(rawJson);
+    // Untrusted JSON boundary; narrowed below before use.
+    const parsed: unknown = JSON.parse(rawJson); // oxlint-disable-line typescript/no-restricted-types
     if (parsed && typeof parsed === "object" && !Array.isArray(parsed)) {
       return parsed as Record<string, string>;
     }

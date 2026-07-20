@@ -6,6 +6,7 @@ import { spyFetchError, spyFetchOk, WEBHOOK } from "./test/fixtures.ts";
 const ELLIPSIS = "…";
 const TRUNCATION_MARKER = "\n\n…(truncated)";
 
+// oxlint-disable-next-line typescript/no-restricted-types
 async function postedEmbed(email: ParsedEmail): Promise<unknown> {
   const fetchSpy = spyFetchOk();
 
@@ -21,6 +22,7 @@ afterEach(() => {
 
 describe("notifyDiscord", () => {
   describe("positive", () => {
+    // oxlint-disable-next-line typescript/no-restricted-types
     it.each<{ name: string; email: ParsedEmail; embed: unknown }>([
       {
         name: "a normal email",

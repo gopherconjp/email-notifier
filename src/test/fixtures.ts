@@ -3,10 +3,7 @@ import type { Env } from "../index.ts";
 
 export const WEBHOOK = "https://discord.com/api/webhooks/xxxx/yyyy";
 
-export function buildMime(
-  headers: Record<string, string>,
-  body: string,
-): string {
+export function buildMime(headers: Record<string, string>, body: string): string {
   const head = Object.entries(headers)
     .map(([name, value]) => `${name}: ${value}`)
     .join("\r\n");
@@ -18,12 +15,9 @@ export function mimeStream(mime: string): ReadableStream<Uint8Array> {
 }
 
 export function makeMessage(to: string) {
-  const mime = buildMime(
-    { From: "Alice <alice@example.com>", To: to, Subject: "Hello" },
-    "Body.",
-  );
-  const forward = vi.fn<(rcptTo: string) => Promise<void>>().mockResolvedValue();
-  const message = {
+  const mime = buildMime({ From: "Alice <alice@example.com>", To: to, Subject: "Hello" }, "Body.");
+  const forward = vi.fn<ForwardableEmailMessage["forward"]>();
+  const message: ForwardableEmailMessage = {
     from: "alice@example.com",
     to,
     headers: new Headers(),
@@ -32,7 +26,7 @@ export function makeMessage(to: string) {
     forward,
     setReject: vi.fn(),
     reply: vi.fn(),
-  } as unknown as ForwardableEmailMessage;
+  };
   return { message, forward };
 }
 
@@ -44,13 +38,9 @@ export function makeEnv(map: Record<string, string> = { user1: WEBHOOK }): Env {
 }
 
 export function spyFetchOk() {
-  return vi
-    .spyOn(globalThis, "fetch")
-    .mockResolvedValue(new Response(null, { status: 204 }));
+  return vi.spyOn(globalThis, "fetch").mockResolvedValue(new Response(null, { status: 204 }));
 }
 
 export function spyFetchError(status: number, body = "") {
-  return vi
-    .spyOn(globalThis, "fetch")
-    .mockResolvedValue(new Response(body, { status }));
+  return vi.spyOn(globalThis, "fetch").mockResolvedValue(new Response(body, { status }));
 }

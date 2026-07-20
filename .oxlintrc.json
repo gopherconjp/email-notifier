@@ -1,0 +1,21 @@
+{
+  "$schema": "./node_modules/oxlint/configuration_schema.json",
+  "plugins": ["typescript", "unicorn", "oxc"],
+  "categories": {
+    "correctness": "error"
+  },
+  "rules": {
+    "typescript/no-explicit-any": "error",
+    "typescript/no-restricted-types": [
+      "error",
+      {
+        "types": {
+          "unknown": "Avoid `unknown`; type the value concretely. Where it is genuinely needed (e.g. the untrusted-input boundary that parses external JSON), allow it per line with `// oxlint-disable-line typescript/no-restricted-types` and a reason."
+        }
+      }
+    ]
+  },
+  "env": {
+    "builtin": true
+  }
+}

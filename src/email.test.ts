@@ -56,8 +56,7 @@ describe("parseEmail", () => {
     it.each([
       { html: "<p>Hello <b>world</b></p>", text: "Hello world" },
       {
-        html:
-          "<style>.a{color:red}</style><p>a &amp; b &lt;c&gt;</p><script>alert(1)</script>",
+        html: "<style>.a{color:red}</style><p>a &amp; b &lt;c&gt;</p><script>alert(1)</script>",
         text: "a & b <c>",
       },
     ])("converts an HTML-only body to text: $html", async ({ html, text }) => {
