@@ -65,10 +65,10 @@ Merging to `main` deploys via
 
 Set these **repository secrets** (Settings → Secrets and variables → Actions):
 
-| Secret                 | Value                                                             |
-| ---------------------- | ---------------------------------------------------------------- |
-| `CLOUDFLARE_API_TOKEN` | Cloudflare token with Workers edit permission.                   |
-| `ENV_YAML`             | The full contents of your `.env.yaml` (same file used locally).  |
+| Secret                 | Value                                                           |
+| ---------------------- | --------------------------------------------------------------- |
+| `CLOUDFLARE_API_TOKEN` | Cloudflare token with Workers edit permission.                  |
+| `ENV_YAML`             | The full contents of your `.env.yaml` (same file used locally). |
 
 Production and local dev share one `.env.yaml`; change a webhook or the forward
 domain by editing `ENV_YAML` and re-running the deploy.
