@@ -1,0 +1,31 @@
+{
+  "name": "email-notifier",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite dev",
+    "build": "vite build",
+    "deploy": "wrangler deploy",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "typecheck": "tsc --noEmit",
+    "gen": "bun run gen:cf-types && bun run gen:dev-vars",
+    "gen:cf-types": "wrangler types",
+    "gen:dev-vars": "bun run scripts/gen-dev-vars.ts"
+  },
+  "dependencies": {
+    "postal-mime": "^2.7.5"
+  },
+  "devDependencies": {
+    "@cloudflare/vite-plugin": "^1.44.0",
+    "@cloudflare/vitest-pool-workers": "^0.18.4",
+    "@cloudflare/workers-types": "^5.20260714.1",
+    "@types/node": "^26.1.1",
+    "typescript": "^7.0.2",
+    "vite": "^8.1.4",
+    "vitest": "^4.1.10",
+    "wrangler": "^4.110.0",
+    "yaml": "^2.9.0"
+  }
+}

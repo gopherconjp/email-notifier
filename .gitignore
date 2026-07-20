@@ -1,0 +1,48 @@
+# Logs
+logs
+*.log
+
+# Test coverage output (vitest)
+coverage
+*.lcov
+
+# Dependencies
+node_modules/
+
+# TypeScript incremental build info
+*.tsbuildinfo
+
+# Build output
+dist
+
+# dotenv environment variable files
+.env
+.env.*
+
+# Vite
+vite.config.js.timestamp-*
+vite.config.ts.timestamp-*
+.vite/
+
+# --- Project-specific (Cloudflare Worker) ---
+
+# Wrangler
+.wrangler/
+
+# Config source and generated local dev secrets (see .env.yaml.example)
+.env.yaml
+.dev.vars
+.dev.vars.*
+
+# Keep the config template (the `.env.*` rule above would ignore it)
+!.env.yaml.example
+
+# Generated Worker types (`wrangler types`)
+worker-configuration.d.ts
+
+# mise local overrides (the tracked mise.toml holds the shared config)
+mise.local.toml
+.mise.local.toml
+
+# macOS
+.DS_Store

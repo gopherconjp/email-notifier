@@ -1,0 +1,79 @@
+import { describe, expect, it } from "vitest";
+import { extractUsername, parseEmail } from "./email.ts";
+import { buildMime, mimeStream } from "./test/fixtures.ts";
+
+describe("extractUsername", () => {
+  describe("positive", () => {
+    it.each([
+      { address: "user1@gophercon.jp", username: "user1" },
+      { address: "User1@gophercon.jp", username: "user1" },
+    ])("maps $address to '$username'", ({ address, username }) => {
+      expect(extractUsername(address)).toBe(username);
+    });
+  });
+
+  describe("negative", () => {
+    it("throws when the input is not an email address", () => {
+      expect(() => extractUsername("not-an-address")).toThrow();
+    });
+  });
+});
+
+describe("parseEmail", () => {
+  describe("positive", () => {
+    it("extracts subject, sender and text body from a MIME message", async () => {
+      const mime = buildMime(
+        {
+          From: "Alice <alice@example.com>",
+          To: "user1@gophercon.jp",
+          Subject: "Hello World",
+          "Content-Type": "text/plain; charset=utf-8",
+        },
+        "This is the body.",
+      );
+
+      const parsed = await parseEmail(mimeStream(mime));
+
+      expect(parsed).toEqual({
+        subject: "Hello World",
+        from: "Alice <alice@example.com>",
+        text: expect.stringContaining("This is the body."),
+      });
+    });
+
+    it("falls back to '(no subject)' for an email with no subject", async () => {
+      const mime = buildMime(
+        { From: "Bob <bob@example.com>", To: "user1@gophercon.jp" },
+        "Body without a subject.",
+      );
+
+      const parsed = await parseEmail(mimeStream(mime));
+
+      expect(parsed.subject).toBe("(no subject)");
+      expect(parsed.from).toBe("Bob <bob@example.com>");
+    });
+
+    it.each([
+      { html: "<p>Hello <b>world</b></p>", text: "Hello world" },
+      {
+        html:
+          "<style>.a{color:red}</style><p>a &amp; b &lt;c&gt;</p><script>alert(1)</script>",
+        text: "a & b <c>",
+      },
+    ])("converts an HTML-only body to text: $html", async ({ html, text }) => {
+      const mime = buildMime(
+        {
+          From: "Bob <bob@example.com>",
+          To: "user1@gophercon.jp",
+          Subject: "s",
+          "Content-Type": "text/html; charset=utf-8",
+        },
+        html,
+      );
+
+      const parsed = await parseEmail(mimeStream(mime));
+
+      expect(parsed.text).toBe(text);
+    });
+  });
+});
