@@ -28,12 +28,20 @@ jobs:
 
       - run: bun run test
 
-      # Secrets (DISCORD_WEBHOOK_MAP / FORWARD_EMAIL_DOMAIN) and Email Routing are
-      # provisioned once out-of-band; this deploys code only. wranglerVersion is
-      # pinned to the lockfile's wrangler so CI and local deploys match.
+      # Push the Worker secrets from GitHub Secrets, then deploy. GitHub Secrets
+      # are the single source of truth; DISCORD_WEBHOOK_MAP must be stored as the
+      # JSON string the Worker JSON.parses (e.g. {"user1":"https://..."}).
+      # Email Routing is still wired once out-of-band in the Cloudflare dashboard.
+      # wranglerVersion is pinned to the lockfile's wrangler so CI and local match.
       - uses: cloudflare/wrangler-action@ebbaa1584979971c8614a24965b4405ff95890e0 # v4.0.0
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           packageManager: bun
           wranglerVersion: "4.110.0"
           command: deploy
+          secrets: |
+            DISCORD_WEBHOOK_MAP
+            FORWARD_EMAIL_DOMAIN
+        env:
+          DISCORD_WEBHOOK_MAP: ${{ secrets.DISCORD_WEBHOOK_MAP }}
+          FORWARD_EMAIL_DOMAIN: ${{ secrets.FORWARD_EMAIL_DOMAIN }}
