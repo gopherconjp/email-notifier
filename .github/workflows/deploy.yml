@@ -38,13 +38,12 @@ jobs:
       - name: Test
         run: bun run test
 
-      - name: Write .env.yaml from secret
-        run: printf '%s' "$ENV_YAML" > .env.yaml
+      - name: Generate .dev.vars from ENV_YAML secret
+        run: |
+          printf '%s' "$ENV_YAML" > .env.yaml
+          bun run gen:dev-vars
         env:
           ENV_YAML: ${{ secrets.ENV_YAML }}
-
-      - name: Generate .dev.vars
-        run: bun run gen:dev-vars
 
       # Email Routing is wired once out-of-band in the Cloudflare dashboard.
       - name: Upload Worker secrets
