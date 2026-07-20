@@ -60,13 +60,8 @@ no local `deploy` script.
 
 ## Deployment
 
-Merging to `main` runs [`.github/workflows/deploy.yml`](.github/workflows/deploy.yml):
-`typecheck` + `test`, then it writes `.env.yaml` from the `ENV_YAML` secret, runs
-`gen:dev-vars` (the same script used locally) to produce `.dev.vars`, uploads it
-with `wrangler secret bulk`, and deploys with
-[`cloudflare/wrangler-action`](https://github.com/cloudflare/wrangler-action).
-All GitHub Actions are pinned to commit SHAs; `wranglerVersion` is pinned to the
-lockfile's wrangler.
+Merging to `main` deploys via
+[`.github/workflows/deploy.yml`](.github/workflows/deploy.yml).
 
 Set these **repository secrets** (Settings → Secrets and variables → Actions):
 
@@ -75,9 +70,8 @@ Set these **repository secrets** (Settings → Secrets and variables → Actions
 | `CLOUDFLARE_API_TOKEN` | Cloudflare token with Workers edit permission.                   |
 | `ENV_YAML`             | The full contents of your `.env.yaml` (same file used locally).  |
 
-There is no separate production format: production and local dev share one
-`.env.yaml`. Changing a webhook or the forward domain means editing `ENV_YAML`
-and re-running the deploy — no hand-written JSON, no `wrangler secret put`.
+Production and local dev share one `.env.yaml`; change a webhook or the forward
+domain by editing `ENV_YAML` and re-running the deploy.
 
 One-time setup outside CI: create the API token, and route incoming mail to this
 Worker in the Cloudflare dashboard (Email → Email Routing → Email Workers).
