@@ -53,8 +53,10 @@ bun run dev         # vite dev, loads .dev.vars
 bun run typecheck   # tsc --noEmit
 bun run test        # vitest (Workers runtime)
 bun run build       # vite build
-bun run deploy      # wrangler deploy (manual; CI does this on merge)
 ```
+
+Deploys happen in CI on merge to `main` (see [Deployment](#deployment)); there is
+no local `deploy` script.
 
 ## Deployment
 
