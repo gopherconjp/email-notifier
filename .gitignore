@@ -34,9 +34,6 @@ vite.config.ts.timestamp-*
 .dev.vars
 .dev.vars.*
 
-# Generated `wrangler secret bulk` input (deploy workflow)
-.secrets.json
-
 # Keep the config template (the `.env.*` rule above would ignore it)
 !.env.yaml.example
 

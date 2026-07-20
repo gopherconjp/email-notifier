@@ -29,17 +29,18 @@ jobs:
       - run: bun run test
 
       # Materialize the same .env.yaml used locally from a single GitHub secret,
-      # then reuse the local gen path to produce the wrangler secret bulk input.
+      # then reuse gen:dev-vars to produce .dev.vars (dotenv), which
+      # `wrangler secret bulk` reads directly.
       - run: printf '%s' "$ENV_YAML" > .env.yaml
         env:
           ENV_YAML: ${{ secrets.ENV_YAML }}
 
-      - run: bun run gen:secrets
+      - run: bun run gen:dev-vars
 
       # Push the Worker secrets, then deploy. Email Routing is still wired once
       # out-of-band in the Cloudflare dashboard. wranglerVersion is pinned to the
       # lockfile's wrangler so CI and local deploys match.
-      - run: bunx wrangler secret bulk .secrets.json
+      - run: bunx wrangler secret bulk .dev.vars
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
 

@@ -60,8 +60,8 @@ bun run deploy      # wrangler deploy (manual; CI does this on merge)
 
 Merging to `main` runs [`.github/workflows/deploy.yml`](.github/workflows/deploy.yml):
 `typecheck` + `test`, then it writes `.env.yaml` from the `ENV_YAML` secret, runs
-`gen:secrets` (the same `loadConfig` used locally) to build the `wrangler secret
-bulk` input, uploads it, and deploys with
+`gen:dev-vars` (the same script used locally) to produce `.dev.vars`, uploads it
+with `wrangler secret bulk`, and deploys with
 [`cloudflare/wrangler-action`](https://github.com/cloudflare/wrangler-action).
 All GitHub Actions are pinned to commit SHAs; `wranglerVersion` is pinned to the
 lockfile's wrangler.
