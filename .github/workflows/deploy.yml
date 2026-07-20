@@ -45,7 +45,6 @@ jobs:
         env:
           ENV_YAML: ${{ secrets.ENV_YAML }}
 
-      # Email Routing is wired once out-of-band in the Cloudflare dashboard.
       - name: Upload Worker secrets
         run: bunx wrangler secret bulk .dev.vars
         env:
