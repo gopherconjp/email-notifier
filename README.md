@@ -36,8 +36,9 @@ cp .env.yaml.example .env.yaml   # then edit
 bun run gen:dev-vars             # -> .dev.vars for local dev
 ```
 
-For production, set the two values as Workers secrets (`wrangler secret put …`
-or the Cloudflare dashboard).
+For production the same `.env.yaml` is stored as one GitHub secret and pushed to
+the Worker by the deploy workflow (see [Deployment](#deployment)); no manual
+`wrangler secret put` is needed.
 
 ## Development
 
@@ -52,8 +53,25 @@ bun run dev         # vite dev, loads .dev.vars
 bun run typecheck   # tsc --noEmit
 bun run test        # vitest (Workers runtime)
 bun run build       # vite build
-bun run deploy      # wrangler deploy
 ```
 
-After deploying, route incoming mail to this Worker in the Cloudflare dashboard
-(Email → Email Routing → Email Workers) and set the production secrets.
+Deploys happen in CI on merge to `main` (see [Deployment](#deployment)); there is
+no local `deploy` script.
+
+## Deployment
+
+Merging to `main` deploys via
+[`.github/workflows/deploy.yml`](.github/workflows/deploy.yml).
+
+Set these **repository secrets** (Settings → Secrets and variables → Actions):
+
+| Secret                 | Value                                                           |
+| ---------------------- | --------------------------------------------------------------- |
+| `CLOUDFLARE_API_TOKEN` | Cloudflare token with Workers edit permission.                  |
+| `ENV_YAML`             | The full contents of your `.env.yaml` (same file used locally). |
+
+Production and local dev share one `.env.yaml`; change a webhook or the forward
+domain by editing `ENV_YAML` and re-running the deploy.
+
+One-time setup outside CI: create the API token, and route incoming mail to this
+Worker in the Cloudflare dashboard (Email → Email Routing → Email Workers).
