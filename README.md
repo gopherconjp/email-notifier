@@ -73,10 +73,5 @@ Set these **repository secrets** (Settings → Secrets and variables → Actions
 Production and local dev share one `.env.yaml`; change a webhook or the forward
 domain by editing `ENV_YAML` and re-running the deploy.
 
-The Worker is reachable only through Email Routing: it has no `fetch` handler, and
-[`wrangler.jsonc`](wrangler.jsonc) disables both the `workers.dev` subdomain
-(`workers_dev`) and per-version Preview URLs (`preview_urls`), so no public
-hostname points at it.
-
 One-time setup outside CI: create the API token, and route incoming mail to this
 Worker in the Cloudflare dashboard (Email → Email Routing → Email Workers).
