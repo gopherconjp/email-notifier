@@ -4,19 +4,8 @@
   "main": "src/index.ts",
   "compatibility_date": "2025-07-01",
   "compatibility_flags": ["nodejs_compat"],
-
-  // This Worker has no `fetch` handler — it is triggered only by Email Routing.
-  // Both public workers.dev hostnames are therefore useless surface area and are
-  // turned off explicitly (`workers_dev` defaults to true when no `routes` are
-  // configured, and Preview URLs follow the account default when unset).
   "workers_dev": false,
   "preview_urls": false,
-
-  // No Wrangler telemetry from this project, regardless of local user settings.
-  "send_metrics": false,
-
-  // Kept on: the only way to inspect email() failures. Logs stay in the
-  // Cloudflare account and the Worker logs errors only, never message bodies.
   "observability": {
     "enabled": true,
   },
