@@ -18,7 +18,7 @@
   "dependencies": {
     "@discordjs/rest": "2.6.3",
     "discord-api-types": "0.38.53",
-    "postal-mime": "2.7.5"
+    "postal-mime": "2.7.6"
   },
   "devDependencies": {
     "@cloudflare/vite-plugin": "1.44.0",
