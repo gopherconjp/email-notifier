@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { extractUsername, parseEmail } from "./email.ts";
+import { extractUsername, parseEmail, stripTag } from "./email.ts";
 import { buildMime, mimeStream } from "./test/fixtures.ts";
 
 describe("extractUsername", () => {
@@ -15,6 +15,18 @@ describe("extractUsername", () => {
   describe("negative", () => {
     it("throws when the input is not an email address", () => {
       expect(() => extractUsername("not-an-address")).toThrow();
+    });
+  });
+});
+
+describe("stripTag", () => {
+  describe("positive", () => {
+    it.each([
+      { username: "user1", stripped: "user1" },
+      { username: "user1+news", stripped: "user1" },
+      { username: "user1+news_archive", stripped: "user1" },
+    ])("maps $username to '$stripped'", ({ username, stripped }) => {
+      expect(stripTag(username)).toBe(stripped);
     });
   });
 });
@@ -37,7 +49,8 @@ describe("parseEmail", () => {
       expect(parsed).toEqual({
         subject: "Hello World",
         from: "Alice <alice@example.com>",
-        text: expect.stringContaining("This is the body."),
+        to: "user1@gophercon.jp",
+        body: expect.stringContaining("This is the body."),
       });
     });
 
@@ -49,8 +62,12 @@ describe("parseEmail", () => {
 
       const parsed = await parseEmail(mimeStream(mime));
 
-      expect(parsed.subject).toBe("(no subject)");
-      expect(parsed.from).toBe("Bob <bob@example.com>");
+      expect(parsed).toEqual({
+        subject: "(no subject)",
+        from: "Bob <bob@example.com>",
+        to: "user1@gophercon.jp",
+        body: expect.stringContaining("Body without a subject."),
+      });
     });
 
     it.each([
@@ -72,7 +89,12 @@ describe("parseEmail", () => {
 
       const parsed = await parseEmail(mimeStream(mime));
 
-      expect(parsed.text).toBe(text);
+      expect(parsed).toEqual({
+        subject: "s",
+        from: "Bob <bob@example.com>",
+        to: "user1@gophercon.jp",
+        body: text,
+      });
     });
   });
 });

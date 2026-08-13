@@ -1,5 +1,6 @@
 import { notifyDiscord } from "./discord.ts";
-import { extractUsername, parseEmail } from "./email.ts";
+import { extractUsername, parseEmail, stripTag } from "./email.ts";
+import { getWebhookMap } from "./env.ts";
 
 export interface Env {
   DISCORD_WEBHOOK_MAP: string;
@@ -7,17 +8,16 @@ export interface Env {
 }
 
 export default {
-  async email(message, env): Promise<void> {
+  email: async (message, env): Promise<void> => {
     const username = extractUsername(message.to);
 
-    // Forward concurrently with the notification; awaited at the end.
     const forwardPromise = message.forward(`${username}@${env.FORWARD_EMAIL_DOMAIN}`);
 
     try {
-      const webhookUrl = getWebhookMap(env.DISCORD_WEBHOOK_MAP)[username];
-      if (webhookUrl) {
+      const webhook = getWebhookMap(env.DISCORD_WEBHOOK_MAP)[stripTag(username)];
+      if (webhook) {
         const parsed = await parseEmail(message.raw);
-        await notifyDiscord(webhookUrl, parsed);
+        await notifyDiscord(webhook, parsed);
       }
     } catch (error) {
       console.error("Discord notification failed:", error);
@@ -26,31 +26,3 @@ export default {
     await forwardPromise;
   },
 } satisfies ExportedHandler<Env>;
-
-function parseWebhookMap(rawJson: string): Record<string, string> {
-  try {
-    // Untrusted JSON boundary; narrowed below before use.
-    const parsed: unknown = JSON.parse(rawJson); // oxlint-disable-line typescript/no-restricted-types
-    if (parsed && typeof parsed === "object" && !Array.isArray(parsed)) {
-      return parsed as Record<string, string>;
-    }
-    console.error("DISCORD_WEBHOOK_MAP is not a JSON object; ignoring.");
-  } catch (error) {
-    console.error("Failed to parse DISCORD_WEBHOOK_MAP:", error);
-  }
-  return {};
-}
-
-// Cache the parsed map keyed on the raw secret. In production the secret is
-// constant, so this parses exactly once per Worker instance; when the value
-// changes (e.g. between tests) it is re-parsed.
-let cachedRaw: string | undefined;
-let cachedMap: Record<string, string> = {};
-
-function getWebhookMap(rawJson: string): Record<string, string> {
-  if (rawJson !== cachedRaw) {
-    cachedRaw = rawJson;
-    cachedMap = parseWebhookMap(rawJson);
-  }
-  return cachedMap;
-}

@@ -14,22 +14,21 @@ afterEach(() => {
 
 describe("email handler", () => {
   describe("positive", () => {
-    it("forwards every message to {username}@FORWARD_EMAIL_DOMAIN", async () => {
-      const { message, forward } = makeMessage("user1@gophercon.jp");
+    it.each([
+      { address: "user1@gophercon.jp", forwardTo: "user1@forward.example.com" },
+      { address: "user1+news@gophercon.jp", forwardTo: "user1+news@forward.example.com" },
+    ])(
+      "forwards $address to $forwardTo and notifies its mapped webhook",
+      async ({ address, forwardTo }) => {
+        const { message, forward } = makeMessage(address);
 
-      await worker.email!(message, makeEnv());
+        await worker.email!(message, makeEnv());
 
-      expect(forward).toHaveBeenCalledWith("user1@forward.example.com");
-    });
-
-    it("notifies the Discord webhook mapped to the username", async () => {
-      const { message } = makeMessage("user1@gophercon.jp");
-
-      await worker.email!(message, makeEnv());
-
-      expect(fetchSpy).toHaveBeenCalledTimes(1);
-      expect(fetchSpy.mock.calls[0]![0]).toBe(WEBHOOK);
-    });
+        expect(forward).toHaveBeenCalledWith(forwardTo);
+        expect(fetchSpy).toHaveBeenCalledTimes(1);
+        expect(fetchSpy.mock.calls[0]![0]).toBe(WEBHOOK);
+      },
+    );
 
     it("forwards without notifying when the username has no webhook", async () => {
       const { message, forward } = makeMessage("nobody@gophercon.jp");
@@ -65,6 +64,7 @@ describe("email handler", () => {
       await expect(worker.email!(message, makeEnv())).resolves.toBeUndefined();
 
       expect(forward).toHaveBeenCalledWith("user1@forward.example.com");
+      expect(fetchSpy).toHaveBeenCalled();
     });
   });
 });
