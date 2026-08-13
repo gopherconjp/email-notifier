@@ -27,7 +27,7 @@ jobs:
         uses: reviewdog/action-actionlint@d63ba7532e0942965320cd8d73cbae4c7b3c5283 # v1.73.1
         with:
           fail_level: error
-      - uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
+      - uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         id: ghalint-cache
         with:
           path: ghalint
