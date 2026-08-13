@@ -9,7 +9,9 @@
     {
       "description": "Track the pinned ghalint version in actions-ci.yaml",
       "customType": "regex",
-      "fileMatch": ["^\\.github/workflows/actions-ci\\.yaml$"],
+      "managerFilePatterns": [
+        "/^\\.github/workflows/actions-ci\\.yaml$/"
+      ],
       "matchStrings": ["GHALINT_VERSION: (?<currentValue>v?\\d+\\.\\d+\\.\\d+)"],
       "datasourceTemplate": "github-releases",
       "depNameTemplate": "suzuki-shunsuke/ghalint"
