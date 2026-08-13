@@ -1,8 +1,8 @@
 import { vi } from "vitest";
 import type { Env } from "../index.ts";
 
-export const WEBHOOK = "https://discord.com/api/webhooks/xxxx/yyyy";
 export const WEBHOOK_ENDPOINT = { id: "xxxx", token: "yyyy" };
+export const WEBHOOK = `https://discord.com/api/webhooks/${WEBHOOK_ENDPOINT.id}/${WEBHOOK_ENDPOINT.token}`;
 
 export const buildMime = (headers: Record<string, string>, body: string): string => {
   const head = Object.entries(headers)
@@ -36,6 +36,3 @@ export const makeEnv = (map: Record<string, string> = { user1: WEBHOOK }): Env =
 
 export const spyFetchOk = () =>
   vi.spyOn(globalThis, "fetch").mockResolvedValue(new Response(null, { status: 204 }));
-
-export const spyFetchError = (status: number, body = "") =>
-  vi.spyOn(globalThis, "fetch").mockResolvedValue(new Response(body, { status }));

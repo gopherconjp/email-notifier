@@ -1,24 +1,28 @@
-import { afterEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { notifyDiscord } from "./discord.ts";
 import type { ParsedEmail } from "./email.ts";
-import { spyFetchError, spyFetchOk, WEBHOOK_ENDPOINT } from "./test/fixtures.ts";
+import { spyFetchOk, WEBHOOK_ENDPOINT } from "./test/fixtures.ts";
 
 const ELLIPSIS = "…";
 const TRUNCATION_MARKER = "\n\n… (以下省略)";
 
+let fetchSpy: ReturnType<typeof vi.spyOn>;
+
+beforeEach(() => {
+  fetchSpy = spyFetchOk();
+});
+
+afterEach(() => {
+  vi.restoreAllMocks();
+});
+
 // oxlint-disable-next-line typescript/no-restricted-types
 const postedEmbed = async (email: ParsedEmail): Promise<unknown> => {
-  const fetchSpy = spyFetchOk();
-
   await notifyDiscord(WEBHOOK_ENDPOINT, email);
 
   const body = fetchSpy.mock.calls[0]![1]!.body as string;
   return JSON.parse(body).embeds[0];
 };
-
-afterEach(() => {
-  vi.restoreAllMocks();
-});
 
 describe("notifyDiscord", () => {
   describe("positive", () => {
@@ -84,7 +88,7 @@ describe("notifyDiscord", () => {
 
   describe("negative", () => {
     it("throws when Discord responds with a non-2xx status", async () => {
-      spyFetchError(500, "boom");
+      fetchSpy.mockResolvedValue(new Response("boom", { status: 500 }));
 
       await expect(
         notifyDiscord(WEBHOOK_ENDPOINT, { subject: "s", from: "f", to: "t", body: "b" }),
