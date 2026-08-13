@@ -27,7 +27,7 @@ jobs:
           fail_level: error
       - name: Install ghalint
         env:
-          GHALINT_VERSION: v1.6.0
+          GHALINT_VERSION: v1.5.6
         run: |
           gh release download "$GHALINT_VERSION" -R suzuki-shunsuke/ghalint \
             -p 'ghalint_linux_amd64.tar.gz' -p 'ghalint_checksums.txt'
