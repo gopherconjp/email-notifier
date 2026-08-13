@@ -1,4 +1,4 @@
-name: gha-ci
+name: Actions CI
 
 on:
   push:
