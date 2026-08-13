@@ -26,9 +26,13 @@ jobs:
         with:
           fail_level: error
       - name: Install ghalint
+        env:
+          GHALINT_VERSION: v1.6.0
         run: |
-          gh release download -R suzuki-shunsuke/ghalint -p 'ghalint_*_linux_amd64.tar.gz' -O ghalint.tar.gz
-          tar -xzf ghalint.tar.gz ghalint
+          gh release download "$GHALINT_VERSION" -R suzuki-shunsuke/ghalint \
+            -p 'ghalint_linux_amd64.tar.gz' -p 'ghalint_checksums.txt'
+          grep 'ghalint_linux_amd64.tar.gz$' ghalint_checksums.txt | sha256sum -c -
+          tar -xzf ghalint_linux_amd64.tar.gz ghalint
       - name: Run ghalint
         run: ./ghalint run
       - name: Run zizmor
