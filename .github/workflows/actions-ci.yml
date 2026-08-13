@@ -26,6 +26,8 @@ jobs:
         with:
           fail_level: error
       - name: Install ghalint
+        env:
+          GH_TOKEN: ${{ github.token }}
         run: |
           gh release download -R suzuki-shunsuke/ghalint -p 'ghalint_*_linux_amd64.tar.gz' -O ghalint.tar.gz
           tar -xzf ghalint.tar.gz ghalint
