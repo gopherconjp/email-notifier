@@ -1,58 +1,43 @@
+import { REST, type ResponseLike } from "@discordjs/rest";
+import type { APIEmbed } from "discord-api-types/v10";
+
 import type { ParsedEmail } from "./email.ts";
+import type { WebhookEndpoint } from "./env.ts";
 
 // Discord embed limits (https://discord.com/developers/docs/resources/message#embed-object-embed-limits).
 const EMBED_TITLE_LIMIT = 256;
 const EMBED_DESCRIPTION_LIMIT = 4096;
 const EMBED_FIELD_VALUE_LIMIT = 1024;
-const TRUNCATION_MARKER = "\n\n…(truncated)";
 
-interface DiscordEmbed {
-  title: string;
-  description: string;
-  fields: { name: string; value: string }[];
-}
+const rest = new REST({
+  makeRequest: (url, init) => fetch(url, init as RequestInit) as Promise<ResponseLike>,
+});
 
-interface DiscordWebhookPayload {
-  embeds: DiscordEmbed[];
-}
+export const notifyDiscord = (webhook: WebhookEndpoint, email: ParsedEmail): Promise<void> =>
+  rest
+    .post(`/webhooks/${webhook.id}/${webhook.token}`, {
+      body: { embeds: [buildEmbed(email)] },
+      auth: false,
+      versioned: false,
+    })
+    .then(() => undefined);
 
-export async function notifyDiscord(webhookUrl: string, email: ParsedEmail): Promise<void> {
-  const response = await fetch(webhookUrl, {
-    method: "POST",
-    headers: { "content-type": "application/json" },
-    body: JSON.stringify(buildDiscordPayload(email)),
-  });
-
-  if (!response.ok) {
-    const detail = await response.text().catch(() => "");
-    throw new Error(
-      `Discord webhook responded ${response.status} ${response.statusText}: ${detail}`,
-    );
-  }
-}
-
-function buildDiscordPayload(email: ParsedEmail): DiscordWebhookPayload {
-  const body = email.text
-    ? truncate(email.text, EMBED_DESCRIPTION_LIMIT, TRUNCATION_MARKER)
+const buildEmbed = (email: ParsedEmail): APIEmbed => {
+  const description = email.body
+    ? truncate(email.body, EMBED_DESCRIPTION_LIMIT, "\n\n… (以下省略)")
     : "(empty body)";
 
   return {
-    embeds: [
-      {
-        title: truncate(email.subject, EMBED_TITLE_LIMIT),
-        description: body,
-        fields: [
-          {
-            name: "From",
-            value: truncate(email.from, EMBED_FIELD_VALUE_LIMIT),
-          },
-        ],
-      },
+    title: truncate(email.subject, EMBED_TITLE_LIMIT, "…"),
+    description,
+    fields: [
+      { name: "From", value: truncate(email.from, EMBED_FIELD_VALUE_LIMIT, "…") },
+      { name: "To", value: truncate(email.to, EMBED_FIELD_VALUE_LIMIT, "…") },
     ],
   };
-}
+};
 
-function truncate(value: string, limit: number, marker = "…"): string {
+const truncate = (value: string, limit: number, marker: string): string => {
   if (value.length <= limit) return value;
   return value.slice(0, limit - marker.length) + marker;
-}
+};

@@ -31,6 +31,16 @@ describe("email handler", () => {
       expect(fetchSpy.mock.calls[0]![0]).toBe(WEBHOOK);
     });
 
+    it("notifies the webhook mapped to the username with the +alias stripped", async () => {
+      const { message, forward } = makeMessage("user1+news@gophercon.jp");
+
+      await worker.email!(message, makeEnv());
+
+      expect(forward).toHaveBeenCalledWith("user1+news@forward.example.com");
+      expect(fetchSpy).toHaveBeenCalledTimes(1);
+      expect(fetchSpy.mock.calls[0]![0]).toBe(WEBHOOK);
+    });
+
     it("forwards without notifying when the username has no webhook", async () => {
       const { message, forward } = makeMessage("nobody@gophercon.jp");
 
