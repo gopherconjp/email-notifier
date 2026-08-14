@@ -38,7 +38,7 @@ cp .env.yaml.example .env.yaml   # then edit
 bun run gen:dev-vars             # -> .dev.vars for local dev
 ```
 
-`.env.yaml` is local-dev only; in production the same two values are Workers
+`.env.yaml` is for local dev only; in production the same two values are Workers
 secrets set in the Cloudflare dashboard (see [Deployment](#deployment)).
 
 ## Development
@@ -61,7 +61,7 @@ no local `deploy` script.
 
 ## Deployment
 
-Pull-type, via
+Pull-based, via
 [Cloudflare Workers Builds](https://developers.cloudflare.com/workers/ci-cd/builds/):
 Cloudflare builds this repository itself, on push to `main` and on pull requests.
 Nothing deploys from GitHub Actions and the repository holds no Cloudflare
