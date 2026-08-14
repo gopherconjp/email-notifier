@@ -3,13 +3,16 @@ export interface WebhookEndpoint {
   token: string;
 }
 
-const parseWebhookUrl = (url: string): WebhookEndpoint => {
-  const parts = new URL(url).pathname.split("/").filter((part) => part !== "");
-  if (parts[0] !== "api" || parts[1] !== "webhooks" || parts.length < 4) {
-    throw new Error("Not a Discord webhook URL");
+let cachedRaw: string | undefined;
+let cachedMap: Record<string, WebhookEndpoint>;
+
+export const getWebhookMap = (rawJson: string): Record<string, WebhookEndpoint> => {
+  if (rawJson !== cachedRaw) {
+    cachedRaw = rawJson;
+    cachedMap = parseWebhookMap(rawJson);
   }
 
-  return { id: parts[2], token: parts[3] };
+  return cachedMap;
 };
 
 const parseWebhookMap = (rawJson: string): Record<string, WebhookEndpoint> => {
@@ -33,14 +36,11 @@ const parseWebhookMap = (rawJson: string): Record<string, WebhookEndpoint> => {
   return {};
 };
 
-let cachedRaw: string | undefined;
-let cachedMap: Record<string, WebhookEndpoint> = {};
-
-export const getWebhookMap = (rawJson: string): Record<string, WebhookEndpoint> => {
-  if (rawJson !== cachedRaw) {
-    cachedRaw = rawJson;
-    cachedMap = parseWebhookMap(rawJson);
+const parseWebhookUrl = (url: string): WebhookEndpoint => {
+  const parts = new URL(url).pathname.split("/").filter((part) => part !== "");
+  if (parts[0] !== "api" || parts[1] !== "webhooks" || parts.length < 4) {
+    throw new Error("Not a Discord webhook URL");
   }
 
-  return cachedMap;
+  return { id: parts[2], token: parts[3] };
 };

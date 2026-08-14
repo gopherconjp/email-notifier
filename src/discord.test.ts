@@ -1,10 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { notifyDiscord } from "./discord.ts";
+import { TRUNC_MARKER_SHORT, notifyDiscord, TRUNC_MARKER_LONG } from "./discord.ts";
 import type { ParsedEmail } from "./email.ts";
 import { spyFetchOk, WEBHOOK_ENDPOINT } from "./test/fixtures.ts";
-
-const ELLIPSIS = "…";
-const TRUNCATION_MARKER = "\n\n… (以下省略)";
 
 let fetchSpy: ReturnType<typeof vi.spyOn>;
 
@@ -62,7 +59,7 @@ describe("notifyDiscord", () => {
         email: { subject: "s", from: "f", to: "t", body: "x".repeat(5000) },
         embed: {
           title: "s",
-          description: "x".repeat(4096 - TRUNCATION_MARKER.length) + TRUNCATION_MARKER,
+          description: "x".repeat(4096 - TRUNC_MARKER_LONG.length) + TRUNC_MARKER_LONG,
           fields: [
             { name: "From", value: "f" },
             { name: "To", value: "t" },
@@ -73,7 +70,7 @@ describe("notifyDiscord", () => {
         name: "an over-long subject",
         email: { subject: "T".repeat(400), from: "f", to: "t", body: "b" },
         embed: {
-          title: "T".repeat(256 - ELLIPSIS.length) + ELLIPSIS,
+          title: "T".repeat(256 - TRUNC_MARKER_SHORT.length) + TRUNC_MARKER_SHORT,
           description: "b",
           fields: [
             { name: "From", value: "f" },

@@ -4,15 +4,19 @@ import type { APIEmbed } from "discord-api-types/v10";
 import type { ParsedEmail } from "./email.ts";
 import type { WebhookEndpoint } from "./env.ts";
 
-// Discord embed limits (https://discord.com/developers/docs/resources/message#embed-object-embed-limits).
-const EMBED_TITLE_LIMIT = 256;
-const EMBED_DESCRIPTION_LIMIT = 4096;
-const EMBED_FIELD_VALUE_LIMIT = 1024;
+export const notifyDiscord = (webhook: WebhookEndpoint, email: ParsedEmail): Promise<void> =>
+  getRest()
+    .post(`/webhooks/${webhook.id}/${webhook.token}`, {
+      body: { embeds: [buildEmbed(email)] },
+      auth: false,
+      versioned: false,
+    })
+    .then(() => undefined);
 
 // The REST constructor schedules interval timers (rate-limit bucket sweepers),
-// which are disallowed at global scope on Cloudflare Workers (error 10021).
+//  which are disallowed at global scope on Cloudflare Workers (error 10021).
 // Construct it lazily inside a handler, and disable the sweepers since webhook
-// posts don't need them.
+//  posts don't need them.
 let rest: REST | undefined;
 const getRest = (): REST => {
   rest ??= new REST({
@@ -24,26 +28,31 @@ const getRest = (): REST => {
   return rest;
 };
 
-export const notifyDiscord = (webhook: WebhookEndpoint, email: ParsedEmail): Promise<void> =>
-  getRest()
-    .post(`/webhooks/${webhook.id}/${webhook.token}`, {
-      body: { embeds: [buildEmbed(email)] },
-      auth: false,
-      versioned: false,
-    })
-    .then(() => undefined);
+// Discord embed limits (https://discord.com/developers/docs/resources/message#embed-object-embed-limits).
+const EMBED_TITLE_LIMIT = 256;
+const EMBED_DESCRIPTION_LIMIT = 4096;
+const EMBED_FIELD_VALUE_LIMIT = 1024;
+
+export const TRUNC_MARKER_SHORT = "…";
+export const TRUNC_MARKER_LONG = "\n\n… (以下省略)";
 
 const buildEmbed = (email: ParsedEmail): APIEmbed => {
   const description = email.body
-    ? truncate(email.body, EMBED_DESCRIPTION_LIMIT, "\n\n… (以下省略)")
+    ? truncate(email.body, EMBED_DESCRIPTION_LIMIT, TRUNC_MARKER_LONG)
     : "(empty body)";
 
   return {
-    title: truncate(email.subject, EMBED_TITLE_LIMIT, "…"),
+    title: truncate(email.subject, EMBED_TITLE_LIMIT, TRUNC_MARKER_SHORT),
     description,
     fields: [
-      { name: "From", value: truncate(email.from, EMBED_FIELD_VALUE_LIMIT, "…") },
-      { name: "To", value: truncate(email.to, EMBED_FIELD_VALUE_LIMIT, "…") },
+      {
+        name: "From",
+        value: truncate(email.from, EMBED_FIELD_VALUE_LIMIT, TRUNC_MARKER_SHORT),
+      },
+      {
+        name: "To",
+        value: truncate(email.to, EMBED_FIELD_VALUE_LIMIT, TRUNC_MARKER_SHORT),
+      },
     ],
   };
 };

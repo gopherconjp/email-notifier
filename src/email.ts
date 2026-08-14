@@ -21,13 +21,6 @@ export interface ParsedEmail {
   body: string;
 }
 
-const formatAddress = (contact?: { name?: string; address?: string }): string => {
-  if (!contact) return "(unknown)";
-
-  if (contact.name) return `${contact.name} <${contact.address ?? ""}>`;
-  return contact.address ?? "(unknown)";
-};
-
 export const parseEmail = (raw: ReadableStream<Uint8Array> | ArrayBuffer): Promise<ParsedEmail> =>
   PostalMime.parse(raw).then((email) => {
     const subject = email.subject?.trim() || "(no subject)";
@@ -42,6 +35,13 @@ export const parseEmail = (raw: ReadableStream<Uint8Array> | ArrayBuffer): Promi
 
     return { subject, from, to, body };
   });
+
+const formatAddress = (contact?: { name?: string; address?: string }): string => {
+  if (!contact) return "(unknown)";
+
+  if (contact.name) return `${contact.name} <${contact.address ?? ""}>`;
+  return contact.address ?? "(unknown)";
+};
 
 const HTML_ENTITIES: Record<string, string> = {
   nbsp: " ",
