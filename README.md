@@ -38,9 +38,9 @@ cp .env.yaml.example .env.yaml   # then edit
 bun run gen:dev-vars             # -> .dev.vars for local dev
 ```
 
-For production the same `.env.yaml` is stored as one GitHub secret and pushed to
-the Worker by the deploy workflow (see [Deployment](#deployment)); no manual
-`wrangler secret put` is needed.
+`.env.yaml` is for local development only. In production the same two values are
+held as Workers secrets inside Cloudflare and are never mirrored to GitHub (see
+[Deployment](#deployment)).
 
 ## Development
 
@@ -57,23 +57,26 @@ bun run test        # vitest (Workers runtime)
 bun run build       # vite build
 ```
 
-Deploys happen in CI on merge to `main` (see [Deployment](#deployment)); there is
+Cloudflare deploys on merge to `main` (see [Deployment](#deployment)); there is
 no local `deploy` script.
 
 ## Deployment
 
-Merging to `main` deploys via
-[`.github/workflows/deploy.yml`](.github/workflows/deploy.yml).
+Deployment is **pull-type**:
+[Cloudflare Workers Builds](https://developers.cloudflare.com/workers/ci-cd/builds/)
+watches this repository and builds it itself. Nothing deploys from GitHub
+Actions, and the repository holds no Cloudflare credentials — a code change is
+the only way GitHub can affect the Worker.
 
-Set these **repository secrets** (Settings → Secrets and variables → Actions):
+- Push to `main` — Cloudflare builds and deploys to production.
+- Pull request — Cloudflare runs the same build, so a PR is checked in the
+  environment it will actually ship in.
 
-| Secret                 | Value                                                           |
-| ---------------------- | --------------------------------------------------------------- |
-| `CLOUDFLARE_API_TOKEN` | Cloudflare token with Workers edit permission.                  |
-| `ENV_YAML`             | The full contents of your `.env.yaml` (same file used locally). |
+Secrets (`DISCORD_WEBHOOK_MAP`, `FORWARD_EMAIL_DOMAIN`) are set on the Worker in
+the Cloudflare dashboard and stay there; changing a webhook or the forward domain
+is a dashboard edit, not a commit or a redeploy of new code.
 
-Production and local dev share one `.env.yaml`; change a webhook or the forward
-domain by editing `ENV_YAML` and re-running the deploy.
-
-One-time setup outside CI: create the API token, and route incoming mail to this
-Worker in the Cloudflare dashboard (Email → Email Routing → Email Workers).
+One-time setup, all in the Cloudflare dashboard: connect this repository to the
+Worker (Workers & Pages → the Worker → Settings → Build), set the two secrets
+(Settings → Variables and Secrets), and route incoming mail to the Worker
+(Email → Email Routing → Email Workers).
