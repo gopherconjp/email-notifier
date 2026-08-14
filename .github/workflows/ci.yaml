@@ -41,7 +41,7 @@ jobs:
 
   test:
     name: Test
-    needs: lint
+    needs: [lint]
     runs-on: ubuntu-latest
     timeout-minutes: 10
     permissions:
