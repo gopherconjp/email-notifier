@@ -8,8 +8,10 @@ Mail to `{username}@your-domain` (e.g. `user1@gophercon.jp`) is forwarded to
 `{username}@FORWARD_EMAIL_DOMAIN` and posted as a Discord embed to the webhook
 mapped to `{username}`. Usernames with no mapping are forwarded only (no error).
 
-Domain-agnostic; single runtime dependency
-([`postal-mime`](https://github.com/postalsys/postal-mime)).
+Domain-agnostic; runtime dependencies kept to
+[`postal-mime`](https://github.com/postalsys/postal-mime) (MIME parsing) and
+[`html-to-text`](https://github.com/html-to-text/node-html-to-text) (HTML body →
+plain text).
 
 ## How it works
 

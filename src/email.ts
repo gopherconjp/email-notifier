@@ -1,3 +1,4 @@
+import { htmlToText } from "html-to-text";
 import PostalMime from "postal-mime";
 
 export const extractUsername = (address: string): string => {
@@ -30,7 +31,13 @@ export const parseEmail = (raw: ReadableStream<Uint8Array> | ArrayBuffer): Promi
 
     let body = email.text?.trim() ?? "";
     if (!body && email.html) {
-      body = htmlToText(email.html);
+      body = htmlToText(email.html, {
+        wordwrap: false,
+        selectors: [
+          { selector: "script", format: "skip" },
+          { selector: "style", format: "skip" },
+        ],
+      });
     }
 
     return { subject, from, to, body };
@@ -42,24 +49,3 @@ const formatAddress = (contact?: { name?: string; address?: string }): string =>
   if (contact.name) return `${contact.name} <${contact.address ?? ""}>`;
   return contact.address ?? "(unknown)";
 };
-
-const HTML_ENTITIES: Record<string, string> = {
-  nbsp: " ",
-  amp: "&",
-  lt: "<",
-  gt: ">",
-  quot: '"',
-  "#39": "'",
-  apos: "'",
-};
-
-const htmlToText = (html: string): string =>
-  html
-    .replace(/<(script|style)[^>]*>[\s\S]*?<\/\1>/gi, "")
-    .replace(/<br\s*\/?>/gi, "\n")
-    .replace(/<\/(p|div|li|tr|h[1-6])>/gi, "\n")
-    .replace(/<[^>]+>/g, "")
-    .replace(/&(#?\w+);/g, (match, entity: string) => HTML_ENTITIES[entity.toLowerCase()] ?? match)
-    .replace(/[ \t]+\n/g, "\n")
-    .replace(/\n{3,}/g, "\n\n")
-    .trim();
