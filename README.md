@@ -38,9 +38,8 @@ cp .env.yaml.example .env.yaml   # then edit
 bun run gen:dev-vars             # -> .dev.vars for local dev
 ```
 
-For production the same `.env.yaml` is stored as one GitHub secret and pushed to
-the Worker by the deploy workflow (see [Deployment](#deployment)); no manual
-`wrangler secret put` is needed.
+`.env.yaml` is for local dev only; in production the same two values are Workers
+secrets set in the Cloudflare dashboard (see [Deployment](#deployment)).
 
 ## Development
 
@@ -57,23 +56,16 @@ bun run test        # vitest (Workers runtime)
 bun run build       # vite build
 ```
 
-Deploys happen in CI on merge to `main` (see [Deployment](#deployment)); there is
+Cloudflare deploys on merge to `main` (see [Deployment](#deployment)); there is
 no local `deploy` script.
 
 ## Deployment
 
-Merging to `main` deploys via
-[`.github/workflows/deploy.yml`](.github/workflows/deploy.yml).
+Pull-based, via
+[Cloudflare Workers Builds](https://developers.cloudflare.com/workers/ci-cd/builds/):
+Cloudflare builds this repository itself, on push to `main` and on pull requests.
+Nothing deploys from GitHub Actions and the repository holds no Cloudflare
+credentials.
 
-Set these **repository secrets** (Settings → Secrets and variables → Actions):
-
-| Secret                 | Value                                                           |
-| ---------------------- | --------------------------------------------------------------- |
-| `CLOUDFLARE_API_TOKEN` | Cloudflare token with Workers edit permission.                  |
-| `ENV_YAML`             | The full contents of your `.env.yaml` (same file used locally). |
-
-Production and local dev share one `.env.yaml`; change a webhook or the forward
-domain by editing `ENV_YAML` and re-running the deploy.
-
-One-time setup outside CI: create the API token, and route incoming mail to this
-Worker in the Cloudflare dashboard (Email → Email Routing → Email Workers).
+Secrets and Email Routing are set on the Worker in the Cloudflare dashboard, so
+changing a webhook or the forward domain needs no commit.
