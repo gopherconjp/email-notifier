@@ -77,6 +77,5 @@ the Cloudflare dashboard and stay there; changing a webhook or the forward domai
 is a dashboard edit, not a commit or a redeploy of new code.
 
 One-time setup, all in the Cloudflare dashboard: connect this repository to the
-Worker (Workers & Pages → the Worker → Settings → Build), set the two secrets
-(Settings → Variables and Secrets), and route incoming mail to the Worker
-(Email → Email Routing → Email Workers).
+Worker, set the two secrets, and route incoming mail to the Worker via Email
+Routing.
