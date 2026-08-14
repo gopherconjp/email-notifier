@@ -38,9 +38,8 @@ cp .env.yaml.example .env.yaml   # then edit
 bun run gen:dev-vars             # -> .dev.vars for local dev
 ```
 
-`.env.yaml` is for local development only. In production the same two values are
-held as Workers secrets inside Cloudflare and are never mirrored to GitHub (see
-[Deployment](#deployment)).
+`.env.yaml` is local-dev only; in production the same two values are Workers
+secrets set in the Cloudflare dashboard (see [Deployment](#deployment)).
 
 ## Development
 
@@ -62,20 +61,11 @@ no local `deploy` script.
 
 ## Deployment
 
-Deployment is **pull-type**:
-[Cloudflare Workers Builds](https://developers.cloudflare.com/workers/ci-cd/builds/)
-watches this repository and builds it itself. Nothing deploys from GitHub
-Actions, and the repository holds no Cloudflare credentials — a code change is
-the only way GitHub can affect the Worker.
+Pull-type, via
+[Cloudflare Workers Builds](https://developers.cloudflare.com/workers/ci-cd/builds/):
+Cloudflare builds this repository itself, on push to `main` and on pull requests.
+Nothing deploys from GitHub Actions and the repository holds no Cloudflare
+credentials.
 
-- Push to `main` — Cloudflare builds and deploys to production.
-- Pull request — Cloudflare runs the same build, so a PR is checked in the
-  environment it will actually ship in.
-
-Secrets (`DISCORD_WEBHOOK_MAP`, `FORWARD_EMAIL_DOMAIN`) are set on the Worker in
-the Cloudflare dashboard and stay there; changing a webhook or the forward domain
-is a dashboard edit, not a commit or a redeploy of new code.
-
-One-time setup, all in the Cloudflare dashboard: connect this repository to the
-Worker, set the two secrets, and route incoming mail to the Worker via Email
-Routing.
+Secrets and Email Routing are set on the Worker in the Cloudflare dashboard, so
+changing a webhook or the forward domain needs no commit.
