@@ -1,4 +1,5 @@
-name: Verify (App)
+# Needed to securely identify the workflow
+name: autofix.ci
 
 on:
   push:
