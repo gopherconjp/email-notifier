@@ -1,9 +1,9 @@
 name: Verify (Actions)
 
 on:
-  workflow_run:
-    workflows: ["autofix.ci"]
-    types: [completed]
+  push:
+    branches: [main]
+  pull_request:
 
 concurrency:
   group: verify-actions-${{ github.workflow }}-${{ github.ref }}
@@ -11,43 +11,7 @@ concurrency:
 
 jobs:
   verify-actions:
-    name: Verify (Actions)
-    runs-on: ubuntu-latest
-    if: ${{ github.event.workflow_run.conclusion == 'success' }}
-    timeout-minutes: 10
+    uses: gopherconjp/actions-toolkit/.github/workflows/verify-actions.yaml@4e79acabd4d513ff3bd0fcf6d94a65a9ff5aee90
     permissions:
       contents: read
       checks: write
-    env:
-      GHALINT_VERSION: v1.5.6
-    steps:
-      - name: Checkout
-        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-        with:
-          persist-credentials: false
-      - name: Run actionlint
-        uses: reviewdog/action-actionlint@dbe5299849118fd6f099ba563d263d770955a64a # v1.73.2
-        with:
-          fail_level: error
-      - name: Cache ghalint
-        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
-        id: ghalint-cache
-        with:
-          path: ghalint
-          key: ghalint-${{ env.GHALINT_VERSION }}
-      - name: Install ghalint
-        if: steps.ghalint-cache.outputs.cache-hit != 'true'
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: |
-          gh release download "$GHALINT_VERSION" -R suzuki-shunsuke/ghalint \
-            -p 'ghalint_*_linux_amd64.tar.gz' \
-            -p 'ghalint_*_checksums.txt'
-          sha256sum -c --ignore-missing ghalint_*_checksums.txt
-          tar -xzf ghalint_*_linux_amd64.tar.gz ghalint
-      - name: Run ghalint
-        run: ./ghalint run
-      - name: Run zizmor
-        uses: zizmorcore/zizmor-action@3dc1ecc9bcb9e94e9b2c709687979e1298497054 # v0.6.2
-        with:
-          advanced-security: false

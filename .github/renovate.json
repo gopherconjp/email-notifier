@@ -6,16 +6,6 @@
   "labels": ["dependencies"],
   "minimumReleaseAge": "3 days",
   "gitIgnoredAuthors": ["114827586+autofix-ci[bot]@users.noreply.github.com"],
-  "customManagers": [
-    {
-      "description": "Track the pinned ghalint version in verify-actions.yaml",
-      "customType": "regex",
-      "managerFilePatterns": ["/^\\.github/workflows/verify-actions\\.yaml$/"],
-      "matchStrings": ["GHALINT_VERSION: (?<currentValue>v?\\d+\\.\\d+\\.\\d+)"],
-      "datasourceTemplate": "github-releases",
-      "depNameTemplate": "suzuki-shunsuke/ghalint"
-    }
-  ],
   "packageRules": [
     {
       "description": "Auto merge all dependencies",
