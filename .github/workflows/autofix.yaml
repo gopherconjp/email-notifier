@@ -22,7 +22,7 @@ jobs:
         with:
           persist-credentials: false
       - name: Setup Bun environment
-        uses: gopherconjp/actions-toolkit/setup-bun@cfc025b3ebf1785ecf72a7ef77f4040863d45fb4 # main
+        uses: gopherconjp/actions-toolkit/setup-bun@ea9ca5ba188f739ffba47548d4b807370d836900 # main
       - name: Lint
         run: bun run lint
       - name: Format
