@@ -1,4 +1,5 @@
 import { readFileSync } from "node:fs";
+
 import { parse } from "yaml";
 
 const CONFIG_PATH = ".env.yaml";

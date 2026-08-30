@@ -1,4 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+
 import worker from "./index.ts";
 import { makeEnv, makeMessage, spyFetchOk, WEBHOOK } from "./test/fixtures.ts";
 

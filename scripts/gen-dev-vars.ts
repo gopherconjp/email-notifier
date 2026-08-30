@@ -1,4 +1,5 @@
 import { writeFileSync } from "node:fs";
+
 import { loadConfig } from "./load-config.ts";
 
 const DEV_VARS_PATH = ".dev.vars";

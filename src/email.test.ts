@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest";
+
 import { extractUsername, parseEmail, stripTag } from "./email.ts";
 import { buildMime, mimeStream } from "./test/fixtures.ts";
 

@@ -1,4 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+
 import { TRUNC_MARKER_SHORT, notifyDiscord, TRUNC_MARKER_LONG } from "./discord.ts";
 import type { ParsedEmail } from "./email.ts";
 import { spyFetchOk, WEBHOOK_ENDPOINT } from "./test/fixtures.ts";
