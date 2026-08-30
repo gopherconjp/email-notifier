@@ -1,18 +1,19 @@
-name: Actions CI
+name: Verify (Actions)
 
 on:
-  push:
-    branches: [main]
-  pull_request:
+  workflow_run:
+    workflows: ["autofix.ci"]
+    types: [completed]
 
 concurrency:
-  group: actions-${{ github.workflow }}-${{ github.ref }}
+  group: verify-actions-${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
-  lint:
-    name: Lint
+  verify-actions:
+    name: Verify (Actions)
     runs-on: ubuntu-latest
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
     timeout-minutes: 10
     permissions:
       contents: read

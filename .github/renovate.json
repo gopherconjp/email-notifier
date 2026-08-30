@@ -5,11 +5,12 @@
   "prConcurrentLimit": 0,
   "labels": ["dependencies"],
   "minimumReleaseAge": "3 days",
+  "ignoreAuthors": ["autofix-ci[bot]"],
   "customManagers": [
     {
-      "description": "Track the pinned ghalint version in actions-ci.yaml",
+      "description": "Track the pinned ghalint version in verify-actions.yaml",
       "customType": "regex",
-      "managerFilePatterns": ["/^\\.github/workflows/actions-ci\\.yaml$/"],
+      "managerFilePatterns": ["/^\\.github/workflows/verify-actions\\.yaml$/"],
       "matchStrings": ["GHALINT_VERSION: (?<currentValue>v?\\d+\\.\\d+\\.\\d+)"],
       "datasourceTemplate": "github-releases",
       "depNameTemplate": "suzuki-shunsuke/ghalint"
