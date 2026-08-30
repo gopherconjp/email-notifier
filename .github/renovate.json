@@ -5,6 +5,7 @@
   "prConcurrentLimit": 0,
   "labels": ["dependencies"],
   "minimumReleaseAge": "3 days",
+  "ignoreAuthors": ["autofix-ci[bot]"],
   "customManagers": [
     {
       "description": "Track the pinned ghalint version in verify-actions.yaml",
