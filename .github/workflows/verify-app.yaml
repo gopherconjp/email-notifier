@@ -1,9 +1,9 @@
 name: Verify (App)
 
 on:
-  workflow_run:
-    workflows: ["autofix.ci"]
-    types: [completed]
+  push:
+    branches: [main]
+  pull_request:
 
 concurrency:
   group: verify-app-${{ github.workflow }}-${{ github.ref }}
@@ -13,26 +13,21 @@ jobs:
   verify-app:
     name: Verify (App)
     runs-on: ubuntu-latest
-    if: ${{ github.event.workflow_run.conclusion == 'success' }}
-    timeout-minutes: 10
+    timeout-minutes: 20
     permissions:
       contents: read
+      actions: read
     steps:
+      - name: Wait for autofix
+        uses: gopherconjp/actions-toolkit/wait-for-workflow@cfc025b3ebf1785ecf72a7ef77f4040863d45fb4
+        with:
+          workflow-id: autofix.yaml
       - name: Checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
-      - name: Setup JS runtimes
-        uses: jdx/mise-action@c2a87611a18de5b3828c5652fe268e992400cb5c # v4.3.0
-      - name: Cache dependencies
-        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
-        with:
-          path: |
-            ~/.bun/install/cache
-            node_modules
-          key: ${{ runner.os }}-${{ hashFiles('**/bun.lock', 'mise.toml') }}
-      - name: Install dependencies
-        run: bun install --frozen-lockfile
+      - name: Setup Bun environment
+        uses: gopherconjp/actions-toolkit/setup-bun@cfc025b3ebf1785ecf72a7ef77f4040863d45fb4
       - name: Generate Workers runtime types
         run: bun run gen:cf-types
       - name: Typecheck
