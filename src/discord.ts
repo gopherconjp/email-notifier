@@ -13,11 +13,10 @@ export const notifyDiscord = (webhook: WebhookEndpoint, email: ParsedEmail): Pro
     })
     .then(() => undefined);
 
-// The REST constructor schedules interval timers (rate-limit bucket sweepers),
-//  which are disallowed at global scope on Cloudflare Workers (error 10021).
-// Construct it lazily inside a handler, and disable the sweepers since webhook
-//  posts don't need them.
-let rest: REST | undefined;
+// The REST constructor schedules interval timers which are disallowed at global scope
+//  on Cloudflare Workers (error 10021).
+// Thus, construct it lazily inside a handler.
+let rest: REST | undefined = undefined;
 const getRest = (): REST => {
   rest ??= new REST({
     makeRequest: (url, init) => fetch(url, init as RequestInit) as Promise<ResponseLike>,
@@ -28,7 +27,8 @@ const getRest = (): REST => {
   return rest;
 };
 
-// Discord embed limits (https://discord.com/developers/docs/resources/message#embed-object-embed-limits).
+// Discord embed limits
+// ref: https://discord.com/developers/docs/resources/message#embed-object-embed-limits
 const EMBED_TITLE_LIMIT = 256;
 const EMBED_DESCRIPTION_LIMIT = 4096;
 const EMBED_FIELD_VALUE_LIMIT = 1024;
