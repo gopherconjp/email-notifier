@@ -5,7 +5,7 @@
   "prConcurrentLimit": 0,
   "labels": ["dependencies"],
   "minimumReleaseAge": "3 days",
-  "ignoreAuthors": ["autofix-ci[bot]"],
+  "gitIgnoredAuthors": ["114827586+autofix-ci[bot]@users.noreply.github.com"],
   "customManagers": [
     {
       "description": "Track the pinned ghalint version in verify-actions.yaml",
