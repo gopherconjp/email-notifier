@@ -15,8 +15,10 @@
     {
       "description": "No minimum release age for gopherconjp/*",
       "matchManagers": ["github-actions"],
-      "matchPackagePrefixes": ["gopherconjp/"],
-      "minimumReleaseAge": "0 days"
+      "minimumReleaseAge": "0 days",
+      "matchPackageNames": [
+        "gopherconjp/{/,}**"
+      ]
     }
   ]
 }
