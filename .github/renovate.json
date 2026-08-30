@@ -11,6 +11,12 @@
       "description": "Auto merge all dependencies",
       "matchUpdateTypes": ["major", "minor", "patch", "digest", "pin", "pinDigest"],
       "automerge": true
+    },
+    {
+      "description": "No minimum release age for gopherconjp/*",
+      "matchManagers": ["github-actions"],
+      "matchPackagePrefixes": ["gopherconjp/"],
+      "minimumReleaseAge": 0
     }
   ]
 }
