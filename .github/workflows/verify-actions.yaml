@@ -11,7 +11,7 @@ concurrency:
 
 jobs:
   verify-actions:
-    uses: gopherconjp/actions-toolkit/.github/workflows/verify-actions.yaml@cfc025b3ebf1785ecf72a7ef77f4040863d45fb4
+    uses: gopherconjp/actions-toolkit/.github/workflows/verify-actions.yaml@cfc025b3ebf1785ecf72a7ef77f4040863d45fb4 # main
     permissions:
       contents: read
       checks: write

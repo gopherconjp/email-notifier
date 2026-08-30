@@ -19,7 +19,7 @@ jobs:
       actions: read
     steps:
       - name: Wait for autofix
-        uses: gopherconjp/actions-toolkit/wait-for-workflow@cfc025b3ebf1785ecf72a7ef77f4040863d45fb4
+        uses: gopherconjp/actions-toolkit/wait-for-workflow@cfc025b3ebf1785ecf72a7ef77f4040863d45fb4 # main
         with:
           workflow-id: autofix.yaml
       - name: Checkout
@@ -27,7 +27,7 @@ jobs:
         with:
           persist-credentials: false
       - name: Setup Bun environment
-        uses: gopherconjp/actions-toolkit/setup-bun@cfc025b3ebf1785ecf72a7ef77f4040863d45fb4
+        uses: gopherconjp/actions-toolkit/setup-bun@cfc025b3ebf1785ecf72a7ef77f4040863d45fb4 # main
       - name: Generate Workers runtime types
         run: bun run gen:cf-types
       - name: Typecheck
