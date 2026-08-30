@@ -3,8 +3,11 @@ name: Verify (App)
 on:
   workflow_run:
     workflows: ["autofix.ci"]
-    types:
-      - completed
+    types: [completed]
+
+concurrency:
+  group: verify-app-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   verify-app:
