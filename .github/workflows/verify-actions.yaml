@@ -1,9 +1,10 @@
 name: Verify (Actions)
 
 on:
-  push:
-    branches: [main]
-  pull_request:
+  workflow_run:
+    workflows: ["autofix.ci"]
+    types:
+      - completed
 
 concurrency:
   group: verify-actions-${{ github.workflow }}-${{ github.ref }}

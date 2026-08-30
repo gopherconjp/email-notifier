@@ -1,17 +1,14 @@
-name: autofix.ci
+name: Verify (App)
 
 on:
-  push:
-    branches: [main]
-  pull_request:
-
-concurrency:
-  group: autofix-${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
+  workflow_run:
+    workflows: ["autofix.ci"]
+    types:
+      - completed
 
 jobs:
-  autofix:
-    name: Autofix
+  verify-app:
+    name: Verify (App)
     runs-on: ubuntu-latest
     timeout-minutes: 10
     permissions:
@@ -32,9 +29,11 @@ jobs:
           key: ${{ runner.os }}-${{ hashFiles('**/bun.lock', 'mise.toml') }}
       - name: Install dependencies
         run: bun install --frozen-lockfile
-      - name: Lint
-        run: bun run lint
-      - name: Format
-        run: bun run format
-      - name: Commit changes
-        uses: autofix-ci/action@c5b2d67aa2274e7b5a18224e8171550871fc7e4a # v1.3.4
+      - name: Generate Workers runtime types
+        run: bun run gen:cf-types
+      - name: Typecheck
+        run: bun run typecheck
+      - name: Build
+        run: bun run build
+      - name: Test
+        run: bun run test
