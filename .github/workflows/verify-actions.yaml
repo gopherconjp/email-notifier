@@ -14,6 +14,7 @@ jobs:
   verify-actions:
     name: Verify (Actions)
     runs-on: ubuntu-latest
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
     timeout-minutes: 10
     permissions:
       contents: read
