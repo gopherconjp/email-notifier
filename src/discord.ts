@@ -14,7 +14,7 @@ export const notifyDiscord = (webhook: WebhookEndpoint, email: ParsedEmail): Pro
     .then(() => undefined);
 
 // The REST constructor schedules interval timers which are disallowed at global scope
-//  on Cloudflare Workers (error 10021).
+// on Cloudflare Workers (error 10021).
 // Thus, construct it lazily inside a handler.
 let rest: REST | undefined = undefined;
 const getRest = (): REST => {
