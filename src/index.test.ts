@@ -3,7 +3,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import worker from "./index.ts";
 import { makeEnv, makeMessage, spyFetchOk, WEBHOOK } from "./test/fixtures.ts";
 
-let fetchSpy: ReturnType<typeof vi.spyOn>;
+let fetchSpy: ReturnType<typeof spyFetchOk>;
 
 beforeEach(() => {
   fetchSpy = spyFetchOk();
@@ -23,18 +23,18 @@ describe("email handler", () => {
       async ({ address, forwardTo }) => {
         const { message, forward } = makeMessage(address);
 
-        await worker.email!(message, makeEnv());
+        await worker.email(message, makeEnv());
 
         expect(forward).toHaveBeenCalledWith(forwardTo);
         expect(fetchSpy).toHaveBeenCalledTimes(1);
-        expect(fetchSpy.mock.calls[0]![0]).toBe(WEBHOOK);
+        expect(fetchSpy.mock.calls[0][0]).toBe(WEBHOOK);
       },
     );
 
     it("forwards without notifying when the username has no webhook", async () => {
       const { message, forward } = makeMessage("nobody@gophercon.jp");
 
-      await worker.email!(message, makeEnv());
+      await worker.email(message, makeEnv());
 
       expect(forward).toHaveBeenCalledWith("nobody@forward.example.com");
       expect(fetchSpy).not.toHaveBeenCalled();
@@ -48,7 +48,7 @@ describe("email handler", () => {
         vi.spyOn(console, "error").mockImplementation(() => {});
         const { message, forward } = makeMessage("user1@gophercon.jp");
 
-        await worker.email!(message, { ...makeEnv(), DISCORD_WEBHOOK_MAP: map });
+        await worker.email(message, { ...makeEnv(), DISCORD_WEBHOOK_MAP: map });
 
         expect(forward).toHaveBeenCalledWith("user1@forward.example.com");
         expect(fetchSpy).not.toHaveBeenCalled();
@@ -62,7 +62,7 @@ describe("email handler", () => {
       vi.spyOn(console, "error").mockImplementation(() => {});
       const { message, forward } = makeMessage("user1@gophercon.jp");
 
-      await expect(worker.email!(message, makeEnv())).resolves.toBeUndefined();
+      await expect(worker.email(message, makeEnv())).resolves.toBeUndefined();
 
       expect(forward).toHaveBeenCalledWith("user1@forward.example.com");
       expect(fetchSpy).toHaveBeenCalled();

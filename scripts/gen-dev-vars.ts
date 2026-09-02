@@ -10,9 +10,10 @@ const main = (): void => {
   const secrets = loadConfig();
 
   const contents =
-    Object.entries(secrets)
-      .map(([key, value]) => dotenvLine(key, value))
-      .join("\n") + "\n";
+    [
+      dotenvLine("DISCORD_WEBHOOK_MAP", secrets.DISCORD_WEBHOOK_MAP),
+      dotenvLine("FORWARD_EMAIL_DOMAIN", secrets.FORWARD_EMAIL_DOMAIN),
+    ].join("\n") + "\n";
   writeFileSync(DEV_VARS_PATH, contents, { mode: 0o600 });
 
   console.log(`Wrote ${DEV_VARS_PATH} from .env.yaml.`);

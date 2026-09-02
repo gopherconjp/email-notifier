@@ -12,7 +12,13 @@ export const buildMime = (headers: Record<string, string>, body: string): string
   return `${head}\r\n\r\n${body}\r\n`;
 };
 
-export const mimeStream = (mime: string): ReadableStream<Uint8Array> => new Response(mime).body!;
+export const mimeStream = (mime: string): ReadableStream<Uint8Array> =>
+  new ReadableStream<Uint8Array>({
+    start(controller) {
+      controller.enqueue(new TextEncoder().encode(mime));
+      controller.close();
+    },
+  });
 
 export const makeMessage = (to: string) => {
   const mime = buildMime({ From: "Alice <alice@example.com>", To: to, Subject: "Hello" }, "Body.");

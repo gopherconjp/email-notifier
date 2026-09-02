@@ -1,21 +1,36 @@
 {
   "$schema": "./node_modules/oxlint/configuration_schema.json",
-  "plugins": ["typescript", "unicorn", "oxc"],
+  "plugins": ["import", "typescript", "unicorn", "oxc"],
   "categories": {
-    "correctness": "error"
-  },
-  "rules": {
-    "typescript/no-explicit-any": "error",
-    "typescript/no-restricted-types": [
-      "error",
-      {
-        "types": {
-          "unknown": "Avoid `unknown`; type the value concretely. Where it is genuinely needed (e.g. the untrusted-input boundary that parses external JSON), allow it per line with `// oxlint-disable-line typescript/no-restricted-types` and a reason."
-        }
-      }
-    ]
+    "correctness": "error",
+    "suspicious": "error",
+    "perf": "error"
   },
   "env": {
-    "builtin": true
+    "astro": true
+  },
+  "options": {
+    "typeAware": true,
+    "typeCheck": true
+  },
+  "rules": {
+    // Type-aware rules
+    "typescript/await-thenable": "error",
+    "typescript/no-floating-promises": "error",
+    "typescript/no-misused-promises": "error",
+    "typescript/no-unsafe-argument": "error",
+    "typescript/no-unsafe-assignment": "error",
+    "typescript/no-unsafe-call": "error",
+    "typescript/no-unsafe-member-access": "error",
+    "typescript/no-unsafe-return": "error",
+    "typescript/no-unsafe-type-assertion": "error",
+    "typescript/no-unsafe-enum-comparison": "error",
+    "typescript/no-unsafe-unary-minus": "error",
+    "typescript/no-implied-eval": "error",
+    "typescript/no-base-to-string": "error",
+    "typescript/no-for-in-array": "error",
+    "typescript/only-throw-error": "error",
+    "typescript/prefer-promise-reject-errors": "error",
+    "typescript/unbound-method": "error"
   }
 }

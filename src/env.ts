@@ -17,14 +17,14 @@ export const getWebhookMap = (rawJson: string): Record<string, WebhookEndpoint> 
 
 const parseWebhookMap = (rawJson: string): Record<string, WebhookEndpoint> => {
   try {
-    const parsed: unknown = JSON.parse(rawJson); // oxlint-disable-line typescript/no-restricted-types
-    if (!parsed || typeof parsed !== "object" || Array.isArray(parsed)) {
-      console.error("DISCORD_WEBHOOK_MAP is not a JSON object; ignoring.");
+    const parsed: unknown = JSON.parse(rawJson);
+    if (!isStringRecord(parsed)) {
+      console.error("DISCORD_WEBHOOK_MAP is not a JSON object of strings; ignoring.");
       return {};
     }
 
     const map: Record<string, WebhookEndpoint> = {};
-    for (const [user, url] of Object.entries(parsed as Record<string, string>)) {
+    for (const [user, url] of Object.entries(parsed)) {
       map[user] = parseWebhookUrl(url);
     }
 
@@ -34,6 +34,14 @@ const parseWebhookMap = (rawJson: string): Record<string, WebhookEndpoint> => {
   }
 
   return {};
+};
+
+const isStringRecord = (value: unknown): value is Record<string, string> => {
+  if (typeof value !== "object" || value === null || Array.isArray(value)) {
+    return false;
+  }
+
+  return Object.values(value).every((item) => typeof item === "string");
 };
 
 const parseWebhookUrl = (url: string): WebhookEndpoint => {

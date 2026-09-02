@@ -19,6 +19,9 @@ export const notifyDiscord = (webhook: WebhookEndpoint, email: ParsedEmail): Pro
 let rest: REST | undefined = undefined;
 const getRest = (): REST => {
   rest ??= new REST({
+    // @discordjs/rest uses its own RequestInit/ResponseLike types, which differ
+    // from Workers' fetch() types; the casts bridge the two.
+    // oxlint-disable-next-line typescript/no-unsafe-type-assertion
     makeRequest: (url, init) => fetch(url, init as RequestInit) as Promise<ResponseLike>,
     hashSweepInterval: 0,
     handlerSweepInterval: 0,

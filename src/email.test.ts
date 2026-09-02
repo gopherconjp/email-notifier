@@ -51,6 +51,8 @@ describe("parseEmail", () => {
         subject: "Hello World",
         from: "Alice <alice@example.com>",
         to: "user1@gophercon.jp",
+        // vitest types asymmetric matchers as `any`.
+        // oxlint-disable-next-line typescript/no-unsafe-assignment
         body: expect.stringContaining("This is the body."),
       });
     });
@@ -67,6 +69,8 @@ describe("parseEmail", () => {
         subject: "(no subject)",
         from: "Bob <bob@example.com>",
         to: "user1@gophercon.jp",
+        // vitest types asymmetric matchers as `any`.
+        // oxlint-disable-next-line typescript/no-unsafe-assignment
         body: expect.stringContaining("Body without a subject."),
       });
     });

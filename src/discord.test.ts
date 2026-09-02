@@ -4,7 +4,7 @@ import { TRUNC_MARKER_SHORT, notifyDiscord, TRUNC_MARKER_LONG } from "./discord.
 import type { ParsedEmail } from "./email.ts";
 import { spyFetchOk, WEBHOOK_ENDPOINT } from "./test/fixtures.ts";
 
-let fetchSpy: ReturnType<typeof vi.spyOn>;
+let fetchSpy: ReturnType<typeof spyFetchOk>;
 
 beforeEach(() => {
   fetchSpy = spyFetchOk();
@@ -14,17 +14,17 @@ afterEach(() => {
   vi.restoreAllMocks();
 });
 
-// oxlint-disable-next-line typescript/no-restricted-types
 const postedEmbed = async (email: ParsedEmail): Promise<unknown> => {
   await notifyDiscord(WEBHOOK_ENDPOINT, email);
 
-  const body = fetchSpy.mock.calls[0]![1]!.body as string;
-  return JSON.parse(body).embeds[0];
+  // @discordjs/rest sends the payload as a JSON string, but RequestInit.body is
+  // typed broadly and JSON.parse yields `any`.
+  // oxlint-disable-next-line typescript/no-unsafe-type-assertion, typescript/no-unsafe-member-access
+  return JSON.parse(fetchSpy.mock.calls[0][1]!.body as string).embeds[0];
 };
 
 describe("notifyDiscord", () => {
   describe("positive", () => {
-    // oxlint-disable-next-line typescript/no-restricted-types
     it.each<{ name: string; email: ParsedEmail; embed: unknown }>([
       {
         name: "a normal email",
