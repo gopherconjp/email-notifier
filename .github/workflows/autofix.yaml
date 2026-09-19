@@ -22,7 +22,7 @@ jobs:
         with:
           persist-credentials: false
       - name: Setup Bun environment
-        uses: gopherconjp/actions-toolkit/setup-bun@676f0f8231abf0aaf651d129620ec481b0c42e05 # main
+        uses: gopherconjp/actions-toolkit/setup-bun@b80c2a2ea9e3ae641e08e76c467e5cb62023750e # main
       - name: Generate Workers runtime types
         run: bun run gen:cf-types
       - name: Typecheck
