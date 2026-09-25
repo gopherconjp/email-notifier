@@ -34,7 +34,7 @@
     "@cloudflare/vitest-pool-workers": "0.22.0",
     "@types/html-to-text": "9.0.4",
     "@types/node": "26.6.2",
-    "oxfmt": "0.68.0",
+    "oxfmt": "0.70.0",
     "oxlint": "1.83.0",
     "oxlint-tsgolint": "7.0.2002",
     "typescript": "7.0.2",
