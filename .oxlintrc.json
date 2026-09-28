@@ -7,7 +7,7 @@
     "perf": "error"
   },
   "env": {
-    "astro": true
+    "builtin": true
   },
   "options": {
     "typeAware": true,
