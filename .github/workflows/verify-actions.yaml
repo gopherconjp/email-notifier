@@ -11,7 +11,7 @@ concurrency:
 
 jobs:
   verify-actions:
-    uses: gopherconjp/actions-toolkit/.github/workflows/verify-actions.yaml@db11f6a3e98d6c3d75ff55757b670464261a25b1 # main
+    uses: logica0419-oss/actions-toolkit/.github/workflows/verify-actions.yaml@db11f6a3e98d6c3d75ff55757b670464261a25b1 # main
     permissions:
       contents: read
       checks: write
