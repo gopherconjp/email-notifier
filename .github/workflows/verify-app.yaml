@@ -28,6 +28,8 @@ jobs:
           persist-credentials: false
       - name: Setup Bun environment
         uses: logica-oss/actions-toolkit/setup-bun@3caa6b132a2307a0dcbff102d1d1411a2be4107a # v1.0.1
+      - name: Generate Workers runtime types
+        run: bun run gen:cf-types
       - name: Check
         run: bun run check
       - name: Knip
