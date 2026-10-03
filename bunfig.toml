@@ -6,5 +6,4 @@
 minimumReleaseAge = 259200
 
 # Packages to exempt from the cooldown (e.g. a security fix you need immediately):
-# syndep is exempted: introduced at v0.1.0 before it aged past the cooldown.
-minimumReleaseAgeExcludes = ["syndep"]
+# minimumReleaseAgeExcludes = ["some-package"]
