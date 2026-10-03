@@ -37,7 +37,7 @@
     "@types/html-to-text": "9.0.4",
     "@types/node": "26.6.3",
     "knip": "6.38.0",
-    "oxfmt": "0.70.0",
+    "oxfmt": "0.71.0",
     "oxlint": "1.85.0",
     "oxlint-tsgolint": "7.0.2003",
     "sort-package-json": "4.0.0",
