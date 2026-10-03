@@ -1,9 +1,8 @@
 ---
-paths:
-  - "src/**/*.ts"
+name: source
+description: "Use when writing or editing production TypeScript in src. Covers file order, comments, contracts, and API surface."
+applyTo: "src/**/*.ts"
 ---
-
-<!-- DO NOT EDIT: Generated from /.github/instructions/source.instructions.md. Edit /.github/instructions/source.instructions.md instead. -->
 
 # Source file conventions
 
