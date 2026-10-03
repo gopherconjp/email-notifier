@@ -11,7 +11,16 @@ concurrency:
 
 jobs:
   verify-actions:
-    uses: logica0419-oss/actions-toolkit/.github/workflows/verify-actions.yaml@db11f6a3e98d6c3d75ff55757b670464261a25b1 # main
+    name: Verify (Actions)
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
     permissions:
       contents: read
       checks: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Verify actions
+        uses: logica-oss/actions-toolkit/verify-actions@3caa6b132a2307a0dcbff102d1d1411a2be4107a # v1.0.1

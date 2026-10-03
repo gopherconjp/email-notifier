@@ -1,10 +1,8 @@
 ---
-paths:
-  - "src/**/*.test.ts"
-  - "src/test/**/*.ts"
+name: tests
+description: "Use when writing or editing vitest files in src. Covers colocation, table-driven style, grouping, and public-API boundaries."
+applyTo: "src/**/*.test.ts,src/test/**/*.ts"
 ---
-
-<!-- DO NOT EDIT: Generated from /.github/instructions/tests.instructions.md. Edit /.github/instructions/tests.instructions.md instead. -->
 
 # Test conventions
 
