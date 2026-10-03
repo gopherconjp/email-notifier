@@ -6,18 +6,5 @@
   "labels": ["dependencies"],
   "minimumReleaseAge": "3 days",
   "rebaseWhen": "conflicted",
-  "gitIgnoredAuthors": ["114827586+autofix-ci[bot]@users.noreply.github.com"],
-  "packageRules": [
-    {
-      "description": "Auto merge all dependencies",
-      "matchUpdateTypes": ["major", "minor", "patch", "digest", "pin", "pinDigest"],
-      "automerge": true
-    },
-    {
-      "description": "No minimum release age for gopherconjp/*",
-      "matchManagers": ["github-actions"],
-      "matchPackageNames": ["gopherconjp/**"],
-      "minimumReleaseAge": "0 days"
-    }
-  ]
+  "gitIgnoredAuthors": ["114827586+autofix-ci[bot]@users.noreply.github.com"]
 }
