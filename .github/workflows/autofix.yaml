@@ -22,14 +22,14 @@ jobs:
         with:
           persist-credentials: false
       - name: Setup Bun environment
-        uses: logica0419-oss/actions-toolkit/setup-bun@db11f6a3e98d6c3d75ff55757b670464261a25b1 # main
+        uses: logica-oss/actions-toolkit/setup-bun@3caa6b132a2307a0dcbff102d1d1411a2be4107a # v1.0.1
       - name: Generate Workers runtime types
         run: bun run gen:cf-types
-      - name: Typecheck
-        run: bun run typecheck
       - name: Lint
         run: bun run lint
       - name: Format
         run: bun run format
-      - name: Commit changes
-        uses: autofix-ci/action@c5b2d67aa2274e7b5a18224e8171550871fc7e4a # v1.3.4
+      - name: Sync Agent Config
+        uses: logica-oss/actions-toolkit/sync-agent-config@3caa6b132a2307a0dcbff102d1d1411a2be4107a # v1.0.1
+      - name: Autofix Text
+        uses: logica-oss/actions-toolkit/autofix-text@3caa6b132a2307a0dcbff102d1d1411a2be4107a # v1.0.1

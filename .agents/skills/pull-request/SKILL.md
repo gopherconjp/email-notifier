@@ -3,8 +3,6 @@ name: pull-request
 description: Conventions for git commits and pull request descriptions in this repo. Use when writing a commit message or opening/updating a pull request.
 ---
 
-<!-- DO NOT EDIT: Generated from /.agents/skills/pull-request. Edit /.agents/skills/pull-request instead. -->
-
 # Commit and pull request conventions
 
 ## Commits
