@@ -4,25 +4,17 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "prebuild": "bun install",
     "build": "vite build",
-    "precheck": "bun install",
     "check": "tsc --noEmit",
-    "predev": "bun install",
     "dev": "vite dev",
-    "preformat": "bun install",
     "format": "sort-package-json && oxfmt --write",
     "gen": "bun run gen:cf-types && bun run gen:dev-vars",
-    "pregen:cf-types": "bun install",
     "gen:cf-types": "wrangler types",
     "gen:dev-vars": "bun run scripts/gen-dev-vars.ts",
-    "preknip": "bun install",
     "knip": "knip",
-    "prelint": "bun install",
     "lint": "oxlint --fix",
-    "pretest": "bun install",
+    "prepare": "simple-git-hooks",
     "test": "vitest run",
-    "pretest:watch": "bun install",
     "test:watch": "vitest"
   },
   "dependencies": {
@@ -40,11 +32,18 @@
     "oxfmt": "0.71.0",
     "oxlint": "1.86.0",
     "oxlint-tsgolint": "7.0.2003",
+    "simple-git-hooks": "2.14.0",
     "sort-package-json": "4.0.0",
+    "syndep": "0.1.0",
     "typescript": "7.0.2",
     "vite": "8.3.1",
     "vitest": "4.1.11",
     "wrangler": "4.141.0",
     "yaml": "2.9.1"
+  },
+  "simple-git-hooks": {
+    "post-checkout": "bun run syndep-bun",
+    "post-merge": "bun run syndep-bun",
+    "post-rewrite": "bun run syndep-bun"
   }
 }

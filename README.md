@@ -45,6 +45,10 @@ secrets set in the Cloudflare dashboard (see [Deployment](#deployment)).
 
 Toolchain (bun, node) is pinned in [`mise.toml`](mise.toml); installs enforce a
 3-day release cooldown ([`bunfig.toml`](bunfig.toml)) for supply-chain safety.
+`bun install` also installs git hooks (`prepare` → `simple-git-hooks`);
+`post-merge` / `post-checkout` / `post-rewrite` run `bun run syndep-bun`,
+which reinstalls dependencies only when manifests drifted and stays silent
+otherwise.
 
 ```bash
 mise install        # pinned bun/node (optional)
