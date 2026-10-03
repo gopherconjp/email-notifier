@@ -24,11 +24,17 @@ paths:
 
 Group by the unit under test first, then by case type inside it. Omit a case-type group that has no cases.
 
-```
+```ts
 describe("functionName", () => {
-  describe("positive", () => { /* ... */ });
-  describe("semi-positive", () => { /* ... */ });
-  describe("negative", () => { /* ... */ });
+  describe("positive", () => {
+    /* ... */
+  });
+  describe("semi-positive", () => {
+    /* ... */
+  });
+  describe("negative", () => {
+    /* ... */
+  });
 });
 ```
 
