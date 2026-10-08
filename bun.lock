@@ -21,7 +21,7 @@
         "oxlint-tsgolint": "7.0.2003",
         "simple-git-hooks": "2.14.0",
         "sort-package-json": "4.0.0",
-        "syndep": "0.1.0",
+        "syndep": "0.1.1",
         "typescript": "7.0.2",
         "vite": "8.3.2",
         "vitest": "4.1.11",
@@ -621,7 +621,7 @@
 
     "supports-color": ["supports-color@10.2.2", "", {}, "sha512-SS+jx45GF1QjgEXQx4NJZV9ImqmO2NPz5FNsIHrsDjh2YsHnawpan7SNQ1o8NuhrbHZy9AZhIoCUiCeaW/C80g=="],
 
-    "syndep": ["syndep@0.1.0", "", { "bin": { "syndep": "dist/bin/syndep.mjs", "syndep-bun": "dist/bin/syndep-bun.mjs" } }, "sha512-cJXMhABriAC7lEfsuDfwt3slpS8/s3MTZVn2AtIvHw+9cDNWb0rTpVf4A1dQjBqAHBgz3HE2Fpc+5M/SbypZ6A=="],
+    "syndep": ["syndep@0.1.1", "", { "bin": { "syndep": "dist/bin/syndep.mjs", "syndep-bun": "dist/bin/syndep-bun.mjs" } }, "sha512-i14dQVXZdE+/0ZtGC/xWeQsGuXuNiNTKsRSGmzT84Dm+R+VAXodn9HSO25TVQFUolc8OzWwgwsDrw2rIQg1l3w=="],
 
     "tinybench": ["tinybench@2.9.0", "", {}, "sha512-0+DUvqWMValLmha6lr4kD8iAMK1HzV0/aKnCtWb9v9641TnP/MFb7Pc2bxoxQjTXAErryXVgUOfv2YqNllqGeg=="],
 
