@@ -24,7 +24,7 @@
     "postal-mime": "4.0.4"
   },
   "devDependencies": {
-    "@cloudflare/vite-plugin": "1.62.5",
+    "@cloudflare/vite-plugin": "1.63.0",
     "@cloudflare/vitest-pool-workers": "0.22.0",
     "@types/html-to-text": "9.0.4",
     "@types/node": "26.6.4",
