@@ -27,7 +27,7 @@
     "@cloudflare/vite-plugin": "1.63.1",
     "@cloudflare/vitest-pool-workers": "0.23.0",
     "@types/html-to-text": "9.0.4",
-    "@types/node": "26.6.4",
+    "@types/node": "26.6.5",
     "knip": "6.41.0",
     "oxfmt": "0.72.0",
     "oxlint": "1.87.0",
