@@ -31,7 +31,7 @@
     "knip": "6.45.1",
     "oxfmt": "0.78.0",
     "oxlint": "1.93.0",
-    "oxlint-tsgolint": "7.0.2006",
+    "oxlint-tsgolint": "7.0.2007",
     "simple-git-hooks": "2.14.0",
     "sort-package-json": "4.1.0",
     "syndep": "0.2.0",
