@@ -29,6 +29,7 @@ export const makeMessage = (to: string) => {
     headers: new Headers(),
     raw: mimeStream(mime),
     rawSize: mime.length,
+    canBeForwarded: true,
     forward,
     setReject: vi.fn(),
     reply: vi.fn(),
