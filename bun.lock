@@ -6,7 +6,7 @@
       "name": "email-notifier",
       "dependencies": {
         "@discordjs/rest": "2.6.3",
-        "discord-api-types": "0.38.59",
+        "discord-api-types": "0.38.60",
         "html-to-text": "10.0.1",
         "postal-mime": "4.2.1",
       },
@@ -507,7 +507,7 @@
 
     "devtools-protocol": ["devtools-protocol@0.0.1182435", "", {}, "sha512-EmlkWb62wSbQNE1gRZZsi4KZYRaF5Skpp183LhRU7+sadKR06O1dHCjZmFSEG6Kv7P6S/UYLxcY3NlYwqKM99w=="],
 
-    "discord-api-types": ["discord-api-types@0.38.59", "", {}, "sha512-LZqh8gvWU/Bhl9qEVIRLeLJuaPGO7rA26IXLrXnMcjXxofh/h5UhP6notfCTj4X5kR1ogMvVgcrVYIuynY/CxQ=="],
+    "discord-api-types": ["discord-api-types@0.38.60", "", {}, "sha512-2xPScuQP3WOf3H4EKWLzvnhlfNl8sBMD+krT8CcjMVJa6o9D/6ssOSgKPTvHyIhQDKUX+gvUJZ43U4HqE+6tsA=="],
 
     "dom-serializer": ["dom-serializer@2.0.0", "", { "dependencies": { "domelementtype": "^2.3.0", "domhandler": "^5.0.2", "entities": "^4.2.0" } }, "sha512-wIkAryiqt/nV5EQKqQpo3SToSOV9J0DnbJqwK7Wv/Trc92zIAYZ4FlMu+JPFW1DfGFt81ZTCGgDEabffXeLyJg=="],
 
